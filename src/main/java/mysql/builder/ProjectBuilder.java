@@ -35,6 +35,7 @@ public class ProjectBuilder {
 
         PreparedStatement ps = null;
         try {
+
             ps = dbConnection.prepareStatement(sqlStm);
             ps.setInt(1, project.id);
             ps.setString(2, project.owner);

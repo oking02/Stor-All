@@ -39,6 +39,9 @@ public class XMLToDto {
 
     }
 
+    //TODO not showing analyis when converting XML Experiment Representations. ClientSide problem mostly.
+
+
     private List<TransferObject> listOfTransferObjectsFromNodes(NodeList nodeList) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         List<TransferObject> transferObjectList = new ArrayList<>();
 
