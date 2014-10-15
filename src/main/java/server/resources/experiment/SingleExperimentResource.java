@@ -2,13 +2,16 @@ package main.java.server.resources.experiment;
 
 import main.java.dto.Analysis;
 import main.java.dto.Experiment;
+import main.java.dto.Export;
 import main.java.dto.TransferObject;
+import main.java.fileutils.FileTranfers;
 import main.java.mysql.builder.AnalysisBuilder;
 import main.java.mysql.presenter.ExperimentPresenter;
 import main.java.mysql.remover.ExperimentRemover;
 import main.java.mysql.utils.DtoToXml;
 import main.java.mysql.utils.IDGenerator;
 import main.java.mysql.utils.XMLToDto;
+import main.java.server.util.GenericExporter;
 import main.java.server.util.ResourceExceptionHandling;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
@@ -18,6 +21,7 @@ import org.restlet.resource.*;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -70,7 +74,26 @@ public class SingleExperimentResource extends ServerResource {
                 analysisBuilder.build();
             }
 
-        }catch (Exception e){
+        } catch (Exception e){
+            exceptionHandling(e, this);
+        }
+    }
+
+    @Put
+    public void exportExperiment(Representation representation) throws IOException, ClassNotFoundException {
+
+//        DomRepresentation domRepresentation = new DomRepresentation(representation);
+//        Document document = domRepresentation.getDocument();
+//
+//        XMLToDto xmlToDto = new XMLToDto(document, Export.class);
+//        List<TransferObject> listOfExportObjects = xmlToDto.convertToTransferObject();
+
+        try{
+
+            GenericExporter genericExporter = new GenericExporter();
+            genericExporter.export(representation);
+
+        } catch (Exception e){
             exceptionHandling(e, this);
         }
 
@@ -91,7 +114,7 @@ public class SingleExperimentResource extends ServerResource {
                 experimentRemover.remove();
             }
 
-        }catch (Exception e){
+        } catch (Exception e){
             exceptionHandling(e, this);
         }
 

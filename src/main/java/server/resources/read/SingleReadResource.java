@@ -4,11 +4,13 @@ import main.java.dto.TransferObject;
 import main.java.mysql.presenter.ReadPresenter;
 import main.java.mysql.remover.ReadRemover;
 import main.java.mysql.utils.DtoToXml;
+import main.java.server.util.GenericExporter;
 import main.java.server.util.ResourceExceptionHandling;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Delete;
 import org.restlet.resource.Get;
+import org.restlet.resource.Put;
 import org.restlet.resource.ServerResource;
 import org.w3c.dom.Document;
 
@@ -44,6 +46,19 @@ public class SingleReadResource extends ServerResource {
         domRepresentation.setDocument(document);
         return domRepresentation;
 
+    }
+
+    @Put
+    public void exportRead(Representation representation){
+
+        try {
+
+            GenericExporter genericExporter = new GenericExporter();
+            genericExporter.export(representation);
+
+        } catch (Exception e){
+            exceptionHandling(e, this);
+        }
     }
 
     @Delete
