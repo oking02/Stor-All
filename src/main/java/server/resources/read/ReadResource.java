@@ -1,8 +1,11 @@
 package main.java.server.resources.read;
 
+import main.java.dto.Export;
 import main.java.dto.Read;
 import main.java.dto.TransferObject;
+import main.java.fileutils.ExportToCSV;
 import main.java.mysql.builder.ReadBuilder;
+import main.java.mysql.presenter.ExperimentPresenter;
 import main.java.mysql.presenter.ReadPresenter;
 import main.java.mysql.utils.DtoToXml;
 import main.java.mysql.utils.IDGenerator;
@@ -12,10 +15,7 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.Representation;
-import org.restlet.resource.Get;
-import org.restlet.resource.Put;
-import org.restlet.resource.ResourceException;
-import org.restlet.resource.ServerResource;
+import org.restlet.resource.*;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -74,5 +74,24 @@ public class ReadResource extends ServerResource {
         }
 
         return newReads;
+    }
+
+    @Post
+    public void exportToFile(Representation representation) throws Exception {
+
+        DomRepresentation domRepresentation = new DomRepresentation(representation);
+        Document document = domRepresentation.getDocument();
+
+        XMLToDto xmlToDto = new XMLToDto(document, Export.class);
+        List<TransferObject> listOfExportObjects = xmlToDto.convertToTransferObject();
+
+        ReadPresenter readPresenter = new ReadPresenter();
+        List<TransferObject> listOfExperiment = readPresenter.createListOfAllReads();
+
+        for (TransferObject transferObject : listOfExportObjects){
+            Export export = (Export) transferObject;
+            ExportToCSV exportToCSV = new ExportToCSV(export.locationToExportTo, listOfExperiment);
+            exportToCSV.createCSV(export.objectType);
+        }
     }
 }

@@ -1,8 +1,10 @@
 package main.java.server.resources.project;
 
 import main.java.dto.Experiment;
+import main.java.dto.Export;
 import main.java.dto.Project;
 import main.java.dto.TransferObject;
+import main.java.fileutils.ExportToCSV;
 import main.java.mysql.builder.ExperimentBuilder;
 import main.java.mysql.builder.ProjectBuilder;
 import main.java.mysql.presenter.ExperimentPresenter;
@@ -14,6 +16,7 @@ import main.java.server.util.ResourceExceptionHandling;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Get;
+import org.restlet.resource.Post;
 import org.restlet.resource.Put;
 import org.restlet.resource.ServerResource;
 import org.w3c.dom.Document;
@@ -72,6 +75,24 @@ public class ProjectResource extends ServerResource {
 
         }catch (Exception e){
             exceptionHandling(e, this);
+        }
+    }
+
+    @Post
+    public void exportToFile(Representation representation) throws Exception {
+        DomRepresentation domRepresentation = new DomRepresentation(representation);
+        Document document = domRepresentation.getDocument();
+
+        XMLToDto xmlToDto = new XMLToDto(document, Export.class);
+        List<TransferObject> listOfExportObjects = xmlToDto.convertToTransferObject();
+
+        ProjectPresenter projectPresenter = new ProjectPresenter();
+        List<TransferObject> listOfExperiment = projectPresenter.createListOfAllProjects();
+
+        for (TransferObject transferObject : listOfExportObjects){
+            Export export = (Export) transferObject;
+            ExportToCSV exportToCSV = new ExportToCSV(export.locationToExportTo, listOfExperiment);
+            exportToCSV.createCSV(export.objectType);
         }
     }
 

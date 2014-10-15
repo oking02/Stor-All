@@ -1,7 +1,9 @@
 package main.java.server.resources.experiment;
 
 import main.java.dto.Experiment;
+import main.java.dto.Export;
 import main.java.dto.TransferObject;
+import main.java.fileutils.ExportToCSV;
 import main.java.mysql.builder.ExperimentBuilder;
 import main.java.mysql.presenter.ExperimentPresenter;
 import main.java.mysql.remover.ExperimentRemover;
@@ -70,6 +72,26 @@ public class ExperimentResource extends ServerResource {
         }catch (Exception e){
             ResourceExceptionHandling.exceptionHandling(e, this);
         }
+    }
+
+    @Post
+    public void exportCSV(Representation representation) throws Exception {
+
+        DomRepresentation domRepresentation = new DomRepresentation(representation);
+        Document document = domRepresentation.getDocument();
+
+        XMLToDto xmlToDto = new XMLToDto(document, Export.class);
+        List<TransferObject> listOfExportObjects = xmlToDto.convertToTransferObject();
+
+        ExperimentPresenter experimentPresenter = new ExperimentPresenter();
+        List<TransferObject> listOfExperiment = experimentPresenter.createListOfAllExperiments();
+
+        for (TransferObject transferObject : listOfExportObjects){
+            Export export = (Export) transferObject;
+            ExportToCSV exportToCSV = new ExportToCSV(export.locationToExportTo, listOfExperiment);
+            exportToCSV.createCSV(export.objectType);
+        }
+
     }
 
 
