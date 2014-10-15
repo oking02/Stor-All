@@ -16,12 +16,13 @@ public class ConnectionToDB {
     private static ConnectionToDB connection = null;
     private Connection dbConnection;
 
-    private ConnectionToDB() throws ClassNotFoundException, IllegalAccessException, InstantiationException, SQLException, SQLException {
+    private ConnectionToDB() throws ClassNotFoundException, IllegalAccessException, InstantiationException, SQLException {
 
         Driver.class.newInstance();
         Class.forName("com.mysql.jdbc.Driver").newInstance();
         String connectionURL = "jdbc:mysql://localhost:3306/storall";
-        dbConnection = (Connection) DriverManager.getConnection(connectionURL, "root", "thorax123");
+        SystemVariables systemVariables = new SystemVariables();
+        dbConnection = (Connection) DriverManager.getConnection(connectionURL, systemVariables.getMysqlName(), systemVariables.getMysqlPassword());
 
     }
 
