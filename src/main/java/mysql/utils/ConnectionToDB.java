@@ -48,49 +48,4 @@ public class ConnectionToDB {
     }
 
 
-
-
-
-
-
-
-
-
-    public void test() throws SQLException {
-
-        ResultSet rs = null;
-        try {
-
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            String connectionURL = "jdbc:mysql://localhost:3306/storall";
-            Connection connection = (Connection) DriverManager.getConnection(connectionURL, "root", "thorax123");
-
-            Statement smt = (Statement) connection.createStatement();
-            rs = smt.executeQuery("SELECT * FROM Person");
-
-            while (rs.next()){
-                System.out.println(rs.getInt("PersonID"));
-                System.out.println(rs.getObject("PersonName"));
-            }
-
-        } catch (SQLException e) {
-            System.out.println("SQLException: " + e.getMessage());
-            System.out.println("SQLState: " + e.getSQLState());
-            System.out.println("VendorError: " + e.getErrorCode());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        } finally {
-            assert rs != null;
-            rs.close();
-        }
-    }
-
-    public static void main(String[] args) throws SQLException {
-        ConnectionToDB connectionToDB = ConnectionToDB.getInstance();
-        connectionToDB.test();
-
-    }
-
-
-
 }
