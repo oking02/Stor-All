@@ -3,6 +3,7 @@ package main.java.mysql.remover;
 import main.java.dto.Experiment;
 import main.java.mysql.utils.ConnectionToDB;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -33,6 +34,7 @@ public class ExperimentRemover implements Remover {
         try {
 
             runDeleteStatement(sqlStm);
+            deleteFiles();
 
         } catch (SQLException e) {
             sqlErrorHandling(e);
@@ -45,5 +47,13 @@ public class ExperimentRemover implements Remover {
         ps.setInt(1, experiment.id);
         ps.execute();
         ps.close();
+    }
+
+    private void deleteFiles(){
+
+        String folderPath = new File("").getAbsolutePath() + "/Experiments/Experiment-" + experiment.id;
+        File containingFolder = new File(folderPath);
+        containingFolder.delete();
+
     }
 }

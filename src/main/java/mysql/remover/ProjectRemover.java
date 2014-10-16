@@ -4,6 +4,7 @@ import main.java.dto.Project;
 import main.java.mysql.errorhandling.SQLErrorHandling;
 import main.java.mysql.utils.ConnectionToDB;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -35,6 +36,7 @@ public class ProjectRemover implements Remover {
         try {
 
             runDeleteStatement(sqlStm);
+            deleteFiles();
 
         } catch (SQLException e) {
             sqlErrorHandling(e);
@@ -47,6 +49,14 @@ public class ProjectRemover implements Remover {
         ps.setInt(1, project.id);
         ps.execute();
         ps.close();
+    }
+
+    private void deleteFiles(){
+
+        String folderPath = new File("").getAbsolutePath() + "/Projects/Project-" + project.id;
+        File containingFolder = new File(folderPath);
+        containingFolder.delete();
+
     }
 
 }

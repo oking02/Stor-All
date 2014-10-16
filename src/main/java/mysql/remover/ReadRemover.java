@@ -4,6 +4,7 @@ import main.java.dto.Project;
 import main.java.dto.Read;
 import main.java.mysql.utils.ConnectionToDB;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -35,6 +36,7 @@ public class ReadRemover implements Remover {
         try {
 
             runDeleteStatement(sqlStm);
+            deleteFiles();
 
         } catch (SQLException e) {
             sqlErrorHandling(e);
@@ -46,6 +48,14 @@ public class ReadRemover implements Remover {
         ps.setInt(1, read.id);
         ps.execute();
         ps.close();
+    }
+
+    private void deleteFiles(){
+
+        String folderPath = new File("").getAbsolutePath() + "/Reads/Read-" + read.id;
+        File containingFolder = new File(folderPath);
+        containingFolder.delete();
+
     }
 
 }
