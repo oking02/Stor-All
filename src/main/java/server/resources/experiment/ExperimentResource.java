@@ -11,12 +11,21 @@ import main.java.mysql.utils.DtoToXml;
 
 import main.java.mysql.utils.IDGenerator;
 import main.java.mysql.utils.XMLToDto;
+import main.java.server.util.AddResponceHeaders;
 import main.java.server.util.ResourceExceptionHandling;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
+import org.restlet.engine.header.Header;
+import org.restlet.ext.json.JsonRepresentation;
+import org.restlet.ext.json.JsonpRepresentation;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.*;
+import org.restlet.util.Series;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -29,8 +38,13 @@ import java.util.List;
  */
 public class ExperimentResource extends ServerResource {
 
-    @Get
+
+
+    @Get("?xml")
     public Representation getExperiments() throws IOException, SQLException, ParserConfigurationException {
+
+        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
+        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
 
         ExperimentPresenter experimentPresenter = new ExperimentPresenter();
         List<TransferObject> listOfExperiments = null;
@@ -48,11 +62,34 @@ public class ExperimentResource extends ServerResource {
 
         DomRepresentation domRepresentation = new DomRepresentation();
         domRepresentation.setDocument(document);
+        domRepresentation.setIndenting(true);
         return domRepresentation;
     }
 
-    @Put
+    @Get ("?json")
+    public JsonRepresentation getExpJson() throws Exception {
+
+        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
+        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+
+        ExperimentPresenter experimentPresenter = new ExperimentPresenter();
+        List<TransferObject> listOfExperiments = experimentPresenter.createListOfAllExperiments();
+
+        JSONArray jsonArray = new JSONArray();
+        String[] names = new String[]{"id", "projectID", "readID", "analysis"};
+
+        for (TransferObject transferObject : listOfExperiments){
+            JSONObject jsonObject1 = new JSONObject(transferObject, names);
+            jsonArray.put(jsonObject1);
+        }
+        return new JsonRepresentation(jsonArray);
+    }
+
+    @Post("?xml")
     public void addExperiment(Representation representation) throws IOException, ClassNotFoundException {
+
+        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
+        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
 
         DomRepresentation domRepresentation = new DomRepresentation(representation);
         Document document = domRepresentation.getDocument();
@@ -74,8 +111,23 @@ public class ExperimentResource extends ServerResource {
         }
     }
 
-    @Post
+    @Post("?json")
+    public void addExperimentUsingJson(Representation representation) throws IOException, JSONException {
+
+        JsonRepresentation jsonRepresentation = new JsonRepresentation(representation);
+        JSONObject jsonObject = jsonRepresentation.getJsonObject();
+
+
+
+        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
+        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+    }
+
+    @Post("?csv")
     public void exportCSV(Representation representation) throws Exception {
+
+        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
+        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
 
         DomRepresentation domRepresentation = new DomRepresentation(representation);
         Document document = domRepresentation.getDocument();
@@ -93,10 +145,5 @@ public class ExperimentResource extends ServerResource {
         }
 
     }
-
-
-
-
-
 
 }

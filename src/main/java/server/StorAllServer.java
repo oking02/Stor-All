@@ -1,5 +1,6 @@
 package main.java.server;
 
+import main.java.server.resources.TestHTMLResource;
 import main.java.server.resources.experiment.ExperimentResource;
 import main.java.server.resources.experiment.SingleExperimentResource;
 import main.java.server.resources.project.ProjectExperimentsResource;
@@ -11,7 +12,10 @@ import main.java.server.resources.read.SingleReadResource;
 import org.restlet.Application;
 import org.restlet.Component;
 import org.restlet.Restlet;
+import org.restlet.data.ChallengeScheme;
 import org.restlet.data.Protocol;
+import org.restlet.resource.Directory;
+import org.restlet.resource.Finder;
 import org.restlet.routing.Router;
 
 
@@ -26,6 +30,7 @@ public class StorAllServer extends Application {
 
         Component component = new Component();
         component.getServers().add(Protocol.HTTP, serverPort);
+        component.getClients().add(Protocol.FILE);
         Application application = new StorAllServer();
         component.getDefaultHost().attach(serverName, application);
         component.start();
@@ -53,6 +58,14 @@ public class StorAllServer extends Application {
         router.attach("/Read", ReadResource.class);
         router.attach("/Read/{id}", SingleReadResource.class);
         router.attach("/Read/{id}/Experiments", ExperimentsUsingRead.class);
+
+        Directory directory = new Directory(getContext(), "file:///home/oking/Documents/Stor-All/web/HtmlCss/test.html");
+        Directory directory1 = new Directory(getContext(), "file:///home/oking/Documents/Stor-All/web/HtmlCss/homestyle.css");
+
+        router.attach("/static", directory);
+        router.attach("/static/homestyle.css", directory1);
+
+        router.attach("/test", TestHTMLResource.class);
 
         return router;
     }
