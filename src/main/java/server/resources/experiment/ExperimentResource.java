@@ -122,7 +122,7 @@ public class ExperimentResource extends ServerResource {
         String projectID = jsonObject.getString("projectID");
         String readID = jsonObject.getString("readID");
         int id = IDGenerator.getUniqueID("Experiment");
-        
+
         Experiment experiment = new Experiment(id, Integer.parseInt(projectID), Integer.parseInt(readID));
         ExperimentBuilder experimentBuilder = new ExperimentBuilder(experiment);
         experimentBuilder.build();
