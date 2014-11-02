@@ -112,15 +112,21 @@ public class ExperimentResource extends ServerResource {
     }
 
     @Post("?json")
-    public void addExperimentUsingJson(Representation representation) throws IOException, JSONException {
-
-        JsonRepresentation jsonRepresentation = new JsonRepresentation(representation);
-        JSONObject jsonObject = jsonRepresentation.getJsonObject();
-
-
+    public void addExperimentUsingJson(JsonRepresentation representation) throws Exception {
 
         Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
         AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+
+        JSONObject jsonObject = representation.getJsonObject();
+
+        String projectID = jsonObject.getString("projectID");
+        String readID = jsonObject.getString("readID");
+        int id = IDGenerator.getUniqueID("Experiment");
+        
+        Experiment experiment = new Experiment(id, Integer.parseInt(projectID), Integer.parseInt(readID));
+        ExperimentBuilder experimentBuilder = new ExperimentBuilder(experiment);
+        experimentBuilder.build();
+
     }
 
     @Post("?csv")
