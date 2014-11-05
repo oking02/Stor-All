@@ -1,6 +1,7 @@
 package main.java.server.resources.read;
 
 import main.java.dto.TransferObject;
+import main.java.fileutils.NoteController;
 import main.java.mysql.presenter.ProjectPresenter;
 import main.java.mysql.presenter.ReadPresenter;
 import main.java.mysql.remover.ReadRemover;
@@ -9,15 +10,13 @@ import main.java.server.util.AddResponceHeaders;
 import main.java.server.util.GenericExporter;
 import main.java.server.util.ResourceExceptionHandling;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.restlet.engine.header.Header;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.Representation;
-import org.restlet.resource.Delete;
-import org.restlet.resource.Get;
-import org.restlet.resource.Put;
-import org.restlet.resource.ServerResource;
+import org.restlet.resource.*;
 import org.restlet.util.Series;
 import org.w3c.dom.Document;
 
@@ -72,6 +71,23 @@ public class SingleReadResource extends ServerResource {
             jsonArray.put(jsonObject1);
         }
         return new JsonRepresentation(jsonArray);
+    }
+
+    @Post("?note")
+    public void addNotes(JsonRepresentation representation) throws JSONException, NoSuchFieldException, IOException {
+
+        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
+        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+
+        int queryExpID = Integer.parseInt(this.getAttribute("id"));
+
+        JSONObject jsonObject = representation.getJsonObject();
+        String note = jsonObject.getString("Note");
+
+
+        NoteController noteController = new NoteController(queryExpID, "Read");
+        noteController.addNotes(note);
+
     }
 
     @Put

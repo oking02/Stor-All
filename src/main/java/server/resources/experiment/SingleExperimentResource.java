@@ -2,6 +2,7 @@ package main.java.server.resources.experiment;
 
 import main.java.dto.*;
 import main.java.fileutils.FileTranfers;
+import main.java.fileutils.NoteController;
 import main.java.mysql.builder.AnalysisBuilder;
 import main.java.mysql.builder.ReadBuilder;
 import main.java.mysql.presenter.ExperimentPresenter;
@@ -120,6 +121,22 @@ public class SingleExperimentResource extends ServerResource {
         Analysis analysis = new Analysis(id, Integer.parseInt(expID), info, dataLocation);
         AnalysisBuilder analysisBuilder = new AnalysisBuilder(analysis);
         analysisBuilder.build();
+    }
+
+    @Post("?note")
+    public void addNotes(JsonRepresentation representation) throws JSONException, NoSuchFieldException, IOException {
+
+        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
+        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        int queryExpID = Integer.parseInt(this.getAttribute("id"));
+
+        JSONObject jsonObject = representation.getJsonObject();
+        String note = jsonObject.getString("Note");
+
+
+        NoteController noteController = new NoteController(queryExpID, "Experiment");
+        noteController.addNotes(note);
+
     }
 
     @Put

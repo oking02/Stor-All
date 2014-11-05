@@ -36,10 +36,10 @@ public class SystemResource extends ServerResource {
         File projectDirectory = new File(new File("").getAbsolutePath() +"/Projects");
         File readDirectory = new File(new File("").getAbsolutePath() +"/Reads");
 
-        long expSize = FileUtils.sizeOfDirectory(experimentDirectory);
-        long proSize = FileUtils.sizeOfDirectory(projectDirectory);
-        long readSize = FileUtils.sizeOfDirectory(readDirectory);
-        long total = expSize + proSize + readSize;
+        long expSize = FileUtils.sizeOfDirectory(experimentDirectory) / 1000000;
+        long proSize = FileUtils.sizeOfDirectory(projectDirectory) / 1000000;
+        long readSize = FileUtils.sizeOfDirectory(readDirectory) / 1000000;
+        long total = expSize + proSize + readSize / 1000000;
 
         Map<String, Long> sizeInfo = new HashMap<>();
         sizeInfo.put("expSize", expSize);

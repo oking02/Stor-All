@@ -3,6 +3,7 @@ package main.java.server.resources.project;
 import main.java.dto.Analysis;
 import main.java.dto.Project;
 import main.java.dto.TransferObject;
+import main.java.fileutils.NoteController;
 import main.java.mysql.builder.AnalysisBuilder;
 import main.java.mysql.presenter.ExperimentPresenter;
 import main.java.mysql.presenter.ProjectPresenter;
@@ -20,10 +21,7 @@ import org.restlet.engine.header.Header;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.Representation;
-import org.restlet.resource.Delete;
-import org.restlet.resource.Get;
-import org.restlet.resource.Put;
-import org.restlet.resource.ServerResource;
+import org.restlet.resource.*;
 import org.restlet.util.Series;
 import org.w3c.dom.Document;
 
@@ -79,6 +77,22 @@ public class SingleProjectResource extends ServerResource {
             jsonArray.put(jsonObject1);
         }
         return new JsonRepresentation(jsonArray);
+    }
+
+    @Post("?note")
+    public void addNotes(JsonRepresentation representation) throws JSONException, NoSuchFieldException, IOException {
+
+        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
+        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        int queryExpID = Integer.parseInt(this.getAttribute("id"));
+
+        JSONObject jsonObject = representation.getJsonObject();
+        String note = jsonObject.getString("Note");
+
+
+        NoteController noteController = new NoteController(queryExpID, "Project");
+        noteController.addNotes(note);
+
     }
 
     @Put

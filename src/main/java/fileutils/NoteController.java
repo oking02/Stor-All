@@ -24,7 +24,7 @@ public class NoteController {
     public void addNotes(String message) throws IOException {
 
         File notesFile = new File(new File("").getAbsolutePath() +"/" + type + "s/" + type + "-" + id +"/notes.txt");
-        System.out.println(notesFile.getAbsolutePath());
+
         if (!doesNotFileExist(notesFile)){
             notesFile.createNewFile();
         }
