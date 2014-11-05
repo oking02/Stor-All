@@ -3,8 +3,11 @@ package main.java.server;
 import main.java.dto.*;
 import main.java.mysql.utils.DtoToXml;
 import main.java.mysql.utils.XMLToDto;
+import main.java.server.resources.experiment.ExperimentResource;
 import org.json.JSONObject;
+import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.ext.xml.DomRepresentation;
+import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.w3c.dom.Document;
 
@@ -21,13 +24,18 @@ import java.util.Map;
  */
 public class TestScript {
 
-    public static void main(String[] args) throws SQLException, NoSuchFieldException, IllegalAccessException, IOException, ParserConfigurationException, ClassNotFoundException {
+    public static void main(String[] args) throws Exception {
 
 
-        Experiment experiment = new Experiment(1, 2, 3);
+        Experiment experiment = new Experiment(0, 1, 1);
         String[] names = new String[]{"id", "projectID", "readID"};
 
         JSONObject newJson = new JSONObject(experiment, names);
+
+        JsonRepresentation jsonRepresentation = new JsonRepresentation(newJson);
+
+        ExperimentResource experimentResource = new ExperimentResource();
+        experimentResource.addExperimentUsingJson(jsonRepresentation);
 
 
         System.out.println(newJson.toString());

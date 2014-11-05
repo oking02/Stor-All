@@ -1,0 +1,31 @@
+#top {
+
+    background-color: lightskyblue;
+    width: 80%;
+    height: 10%;
+
+}
+
+#titleheading{
+    align-content: center;
+    text-align: center;
+}
+
+#rightbar{
+    background-color: wheat;
+    width: 20%;
+    height: 80%;
+}
+
+#middle{
+    background-color: deepskyblue;
+    width: 80%;
+    height: 80%;
+    align-items: flex-start;
+    text-align: center;
+}
+
+p {
+    border:1px solid black;
+    padding:10px;
+}

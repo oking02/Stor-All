@@ -9,6 +9,7 @@ import main.java.server.resources.project.SingleProjectResource;
 import main.java.server.resources.read.ExperimentsUsingRead;
 import main.java.server.resources.read.ReadResource;
 import main.java.server.resources.read.SingleReadResource;
+import main.java.server.resources.system.SystemResource;
 import org.restlet.Application;
 import org.restlet.Component;
 import org.restlet.Restlet;
@@ -59,11 +60,7 @@ public class StorAllServer extends Application {
         router.attach("/Read/{id}", SingleReadResource.class);
         router.attach("/Read/{id}/Experiments", ExperimentsUsingRead.class);
 
-        Directory directory = new Directory(getContext(), "file:///home/oking/Documents/Stor-All/web/HtmlCss/test.html");
-        Directory directory1 = new Directory(getContext(), "file:///home/oking/Documents/Stor-All/web/HtmlCss/homestyle.css");
-
-        router.attach("/static", directory);
-        router.attach("/static/homestyle.css", directory1);
+        router.attach("/system", SystemResource.class);
 
         router.attach("/test", TestHTMLResource.class);
 

@@ -1,21 +1,31 @@
 package main.java.server.resources.read;
 
 import main.java.dto.Export;
+import main.java.dto.Project;
 import main.java.dto.Read;
 import main.java.dto.TransferObject;
 import main.java.fileutils.ExportToCSV;
+import main.java.mysql.builder.ProjectBuilder;
 import main.java.mysql.builder.ReadBuilder;
 import main.java.mysql.presenter.ExperimentPresenter;
+import main.java.mysql.presenter.ProjectPresenter;
 import main.java.mysql.presenter.ReadPresenter;
 import main.java.mysql.utils.DtoToXml;
 import main.java.mysql.utils.IDGenerator;
 import main.java.mysql.utils.XMLToDto;
+import main.java.server.util.AddResponceHeaders;
 import main.java.server.util.ResourceExceptionHandling;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
+import org.restlet.engine.header.Header;
+import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.*;
+import org.restlet.util.Series;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -28,7 +38,7 @@ import java.util.List;
  */
 public class ReadResource extends ServerResource {
 
-    @Get
+    @Get("?xml")
     public Representation getReads() throws ParserConfigurationException, IOException {
 
         List<TransferObject> listOfReads = null;
@@ -49,7 +59,25 @@ public class ReadResource extends ServerResource {
         return domRepresentation;
     }
 
-    @Put
+    @Get("?json")
+    public Representation getReadJson() throws Exception {
+        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
+        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+
+        ReadPresenter readPresenter = new ReadPresenter();
+        List<TransferObject> listOfProjects = readPresenter.createListOfAllReads();
+
+        JSONArray jsonArray = new JSONArray();
+        String[] names = new String[]{"id"};
+
+        for (TransferObject transferObject : listOfProjects){
+            JSONObject jsonObject1 = new JSONObject(transferObject, names);
+            jsonArray.put(jsonObject1);
+        }
+        return new JsonRepresentation(jsonArray);
+    }
+
+    @Post("?xml")
     public String addRead(Representation representation) throws IOException, ClassNotFoundException {
 
         DomRepresentation domRepresentation = new DomRepresentation(representation);
@@ -76,7 +104,24 @@ public class ReadResource extends ServerResource {
         return newReads;
     }
 
-    @Post
+    @Post("?json")
+    public void addReadJson(JsonRepresentation representation) throws Exception {
+
+        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
+        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+
+        JSONObject jsonObject = representation.getJsonObject();
+
+        String locationOfReadData = jsonObject.getString("locationOfReadData");
+        int id = IDGenerator.getUniqueID("Read");
+
+        Read read = new Read(id, locationOfReadData);
+        ReadBuilder readBuilder = new ReadBuilder(read);
+        readBuilder.build();
+    }
+
+
+    @Post("?file")
     public void exportToFile(Representation representation) throws Exception {
 
         DomRepresentation domRepresentation = new DomRepresentation(representation);
