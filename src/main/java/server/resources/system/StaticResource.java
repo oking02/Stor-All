@@ -22,7 +22,7 @@ public class StaticResource extends ServerResource {
         Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
         AddResponceHeaders.addHeaders(responseHeaders, getResponse());
 
-        FileRepresentation fileRepresentation = new FileRepresentation(new File("/home/oking/Documents/PersonalSite/BootStrapVersion/index.html"), MediaType.TEXT_HTML);
+        FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/index.html"), MediaType.TEXT_HTML);
         return fileRepresentation;
     }
 
@@ -32,7 +32,7 @@ public class StaticResource extends ServerResource {
         Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
         AddResponceHeaders.addHeaders(responseHeaders, getResponse());
 
-        FileRepresentation fileRepresentation = new FileRepresentation(new File("/home/oking/Documents/PersonalSite/BootStrapVersion/scripts.js"), MediaType.APPLICATION_JAVASCRIPT);
+        FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/scripts.js"), MediaType.APPLICATION_JAVASCRIPT);
         return fileRepresentation;
     }
 }

@@ -9,6 +9,7 @@ import main.java.server.resources.project.SingleProjectResource;
 import main.java.server.resources.read.ExperimentsUsingRead;
 import main.java.server.resources.read.ReadResource;
 import main.java.server.resources.read.SingleReadResource;
+import main.java.server.resources.system.StaticResource;
 import main.java.server.resources.system.SystemResource;
 import org.restlet.Application;
 import org.restlet.Component;
@@ -61,6 +62,10 @@ public class StorAllServer extends Application {
         router.attach("/Read/{id}/Experiments", ExperimentsUsingRead.class);
 
         router.attach("/system", SystemResource.class);
+
+        router.attach("/static", StaticResource.class);
+
+        router.attach("", StaticResource.class);
 
         router.attach("/test", TestHTMLResource.class);
 
