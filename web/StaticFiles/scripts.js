@@ -6,7 +6,7 @@ function startTime() {
     var s=today.getSeconds();
     m = checkTime(m);
     s = checkTime(s);
-    document.getElementById('timeDisplay').innerHTML = h+":"+m+":"+s;
+    document.getElementById("timeDisplay").innerHTML = h+":"+m+":"+s;
     var t = setTimeout(function(){startTime()},500);
 }
 
@@ -27,255 +27,118 @@ function checkServerDetails(){
 
 $(document).ready(function(){
 
-	$( "form" ).hide();
-	$( ".alert" ).hide();
-	$( ".systemInfo" ).hide();
-	
 	checkServerDetails();
+	startTime();
 
-	$("button").click(function(){
-			$( ".alert" ).hide();
+	$("#home").click(function(){
+				$.get("http://localhost:27777/storall/static?home", function(data, status){
+				$( "#main" ).empty();
+	    		$( "#main" ).html(data);
+	  			});
 		})
-
 
 /*--------------------------- Experiment Section -------------------------------------*/
 
 	  
 	$("#expAddBtm").click(function(){
-			$( ".systemInfo" ).hide();
-			$( "form" ).hide();
-			$("#AddExperiment").show();
+			$.get("http://localhost:27777/storall/forms/experiment?addexperiment", function(data, status){
+			$( "#main" ).empty();
+    		$( "#main" ).html(data);
+  			});
 		})
 
-	$("#newExpSubBtm").click(function(){
-
-		var pId = $("input[id=pIDe]").val();
-		var rId = $("input[id=rIDe]").val();
-
-		var jsonObj = {};
-		jsonObj["projectID"] = pId;
-		jsonObj["readID"] = rId;	
-
-		$.post("http://localhost:27777/storall/Experiment?json", JSON.stringify(jsonObj))
-			.done(function(){
-				$("#expAddSuccess").show();
-			}).fail(function(){
-				$("#expAddFail").show();
-		});	
-
-		})
 
 	$("#expAddAnaBtm").click(function(){
-			$( ".systemInfo" ).hide();
-			$( "form" ).hide();
-			$("#AddAnalysis").show();
+			$.get("http://localhost:27777/storall/forms/experiment?addanalysis", function(data, status){
+			$( "#main" ).empty();
+    		$( "#main" ).html(data);
+  			});
 		})
 
-	$("#addAnaSubBtm").click(function(){
-
-		var expID = $("input[id=expIDa]").val();
-		var info = $("input[id=info]").val();
-		var aloc = $("input[id=aloc]").val();
-
-		var jsonObj = {};
-		jsonObj["expID"] = expID;
-		jsonObj["info"] = info;	
-		jsonObj["dataLocation"] = aloc;	
-
-		$.post("http://localhost:27777/storall/Experiment/" + expID + "?json", JSON.stringify(jsonObj))
-			.done(function(){
-				$("#expAnaSuccess").show();
-			}).fail(function(){
-				$("#expAnaFail").show();
-		});	
-
-		})
 
 	$("#expAddNotesBtm").click(function(){
-			$( ".systemInfo" ).hide();
-			$( "form" ).hide();
-			$("#AddExperimentNotes").show();
+			$.get("http://localhost:27777/storall/forms/experiment?addexperimentnotes", function(data, status){
+			$( "#main" ).empty();
+    		$( "#main" ).html(data);
+  			});
 		})
-
-	$("#expAddNoteSubBtm").click(function(){
-
-		var expID = $("input[id=expIDn]").val();
-		var note = $("textarea[id=note]").val();
-
-		var jsonObj = {};
-		jsonObj["expID"] = expID;
-		jsonObj["Note"] = note;	
-
-		$.post("http://localhost:27777/storall/Experiment/" + expID + "?note", JSON.stringify(jsonObj))
-			.done(function(){
-				$("#expAnaSuccess").show();
-			}).fail(function(){
-				$("#expAnaFail").show();
-		});	
-
-		})
-
-
 
 
 	$("#expFind").click(function(){
-			$( ".systemInfo" ).hide();
-			$( "form" ).hide();
-			$("#FindExperiment").show();
+			$.get("http://localhost:27777/storall/forms/experiment?findexperiment", function(data, status){
+			$( "#main" ).empty();
+    		$( "#main" ).html(data);
+  			});
 		})
 
-	$("#findExpSubBtm").click(function(){
-
-		var expID = $("input[id=expIDf]").val();
-
-		$.get("http://localhost:27777/storall/Experiment/" + expID + "?json", function(data, status){
-
-    		alert(JSON.stringify(data, undefined, '\t'));
-  		});
-
-		})
 
 /*------------------------------- Project Section -----------------------------*/
 	
 
   
 	$("#proAddBtm").click(function(){
-			$( ".systemInfo" ).hide();
-			$( "form" ).hide();
-			$("#AddProject").show();			
+			$.get("http://localhost:27777/storall/forms/project?addproject", function(data, status){
+			$( "#main" ).empty();
+    		$( "#main" ).html(data);
+  			});			
 		})
 
-	$("#newProSubBtm").click(function(){
-
-		var owner = $("input[id=owner]").val();
-
-		var jsonObj = {};
-		jsonObj["owner"] = owner;
-
-		$.post("http://localhost:27777/storall/Project?json", JSON.stringify(jsonObj))
-			.done(function(){
-				$("#expAddSuccess").show();
-			}).fail(function(){
-				$("#expAddFail").show();
-		});	
-
-		})
 
 	$("#proAddNotesBtm").click(function(){
-			$( ".systemInfo" ).hide();
-			$( "form" ).hide();
-			$("#AddProjectNotes").show();			
+			$.get("http://localhost:27777/storall/forms/project?addprojectnotes", function(data, status){
+			$( "#main" ).empty();
+    		$( "#main" ).html(data);
+  			});			
 		})
 
-	$("#proAddNoteSubBtm").click(function(){
-
-		var pID = $("input[id=pIDn]").val();
-		var note = $("textarea[id=pnote]").val();
-
-		var jsonObj = {};
-		jsonObj["pID"] = pID;
-		jsonObj["Note"] = note;	
-
-		$.post("http://localhost:27777/storall/Project/" + pID + "?note", JSON.stringify(jsonObj))
-			.done(function(){
-				$("#expAnaSuccess").show();
-			}).fail(function(){
-				$("#expAnaFail").show();
-		});	
-
-		})
 
 	$("#proFind").click(function(){
-			$( ".systemInfo" ).hide();
-			$( "form" ).hide();
-			$("#FindProject").show();
+		$.get("http://localhost:27777/storall/forms/project?findproject", function(data, status){
+			$( "#main" ).empty();
+    		$( "#main" ).html(data);
+  			});
 		})
 
-	$("#findProSubBtm").click(function(){
-
-		var pID = $("input[id=pIDf]").val();
-
-		$.get("http://localhost:27777/storall/Project/" + pID + "?json", function(data, status){
-
-    		alert(JSON.stringify(data, undefined, '\t'));
-  		});
-
-		})
 
 /*-------------------------------------- Read Section ----------------------------------------------*/
 	
 
-  
 	$("#readAddBtm").click(function(){
-			$( ".systemInfo" ).hide();
-			$( "form" ).hide();
-			$("#AddRead").show();
-		})
+		$.get("http://localhost:27777/storall/forms/read?addread", function(data, status){
+			$( "#main" ).empty();
+    		$( "#main" ).html(data);
+  		});
+	})
 
-	$("#newReadSubBtm").click(function(){
 
-		var location = $("input[id=rloc]").val();
-
-		var jsonObj = {};
-		jsonObj["locationOfReadData"] = location;
-
-		$.post("http://localhost:27777/storall/Read?json", JSON.stringify(jsonObj))
-			.done(function(){
-				$("#expAddSuccess").show();
-			}).fail(function(){
-				$("#expAddFail").show();
-		});	
-
-		})
 
 	$("#readAddNotesBtm").click(function(){
-			$( ".systemInfo" ).hide();
-			$( "form" ).hide();
-			$("#AddReadNotes").show();
-		})
+		$.get("http://localhost:27777/storall/forms/read?addreadnotes", function(data, status){
+			$( "#main" ).empty();
+    		$( "#main" ).html(data);
+  		});
+	})
 
-	$("#readAddNoteSubBtm").click(function(){
 
-		var rID = $("input[id=rIDn]").val();
-		var note = $("textarea[id=rnote]").val();
-
-		var jsonObj = {};
-		jsonObj["rID"] = rID;
-		jsonObj["Note"] = note;	
-
-		$.post("http://localhost:27777/storall/Read/" + rID + "?note", JSON.stringify(jsonObj))
-			.done(function(){
-				$("#expAnaSuccess").show();
-			}).fail(function(){
-				$("#expAnaFail").show();
-		});	
-
-		})
 
 	$("#readFind").click(function(){
-			$( ".systemInfo" ).hide();
-			$( "form" ).hide();;
-			$("#FindRead").show();
-		})
-
-	$("#findReadSubBtm").click(function(){
-
-		var rID = $("input[id=rIDf]").val();
-
-		$.get("http://localhost:27777/storall/Read/" + rID + "?json", function(data, status){
-
-    		alert(JSON.stringify(data, undefined, '\t'));
+		$.get("http://localhost:27777/storall/forms/read?findread", function(data, status){
+			$( "#main" ).empty();
+    		$( "#main" ).html(data);
   		});
+	})
 
-		})
 
 	/*-------------------------------------- System Section ----------------------------------------------*/
 
 
 	$("#systemPageBtm").click(function(){
-			$( "form" ).hide();
-			$( ".systemInfo" ).show();
-		})
+		$.get("http://localhost:27777/storall/system?page", function(data, status){
+			$( "#main" ).empty();
+    		$( "#main" ).html(data);
+    		updateSystemInfo();	
+  		});
+	})
 
 	continuousUpdate();
 
@@ -292,10 +155,191 @@ $(document).ready(function(){
 		$( "#serverForm" ).show();
 	})
 
+	/*-------------------------------------- Help Section ----------------------------------------------*/
+
+	$("#collTypeBtn").click(function(){
+		$.get("http://localhost:27777/storall/help?colltype", function(data, status){
+			$( "#main" ).empty();
+    		$( "#main" ).html(data);	
+  		});
+	})
+
+	$("#howToBtn").click(function(){
+		$.get("http://localhost:27777/storall/help?howto", function(data, status){
+			$( "#main" ).empty();
+    		$( "#main" ).html(data);	
+  		});
+	})
 		
 });
 
+/* --------------------- JavaScript Functions -----------------------------------*/
 
+
+/*------------------------------- Experiment Section -----------------------------*/
+
+	function addExperiment(){
+		var pId = $("input[id=pIDe]").val();
+		var rId = $("input[id=rIDe]").val();
+
+		var jsonObj = {};
+		jsonObj["projectID"] = pId;
+		jsonObj["readID"] = rId;	
+
+		$.post("http://localhost:27777/storall/Experiment?json", JSON.stringify(jsonObj))
+			.done(function(){
+				$("#expAddSuccess").show();
+			}).fail(function(){
+				$("#expAddFail").show();
+		});
+	}
+
+	function addAnalysis(){
+		var expID = $("input[id=expIDa]").val();
+		var info = $("input[id=info]").val();
+		var aloc = $("input[id=aloc]").val();
+
+		var jsonObj = {};
+		jsonObj["expID"] = expID;
+		jsonObj["info"] = info;	
+		jsonObj["dataLocation"] = aloc;	
+
+		$.post("http://localhost:27777/storall/Experiment/" + expID + "?json", JSON.stringify(jsonObj))
+			.done(function(){
+				$("#expAnaSuccess").show();
+			}).fail(function(){
+				$("#expAnaFail").show();
+		});
+	}
+
+	function addExperimentNotes(){
+		var expID = $("input[id=expIDn]").val();
+		var note = $("textarea[id=note]").val();
+
+		var jsonObj = {};
+		jsonObj["expID"] = expID;
+		jsonObj["Note"] = note;	
+
+		$.post("http://localhost:27777/storall/Experiment/" + expID + "?note", JSON.stringify(jsonObj))
+			.done(function(){
+				$("#expAnaSuccess").show();
+			}).fail(function(){
+				$("#expAnaFail").show();
+		});
+	}
+
+	function findExperiment(){
+		var expID = $("input[id=expIDf]").val();
+
+		$.get("http://localhost:27777/storall/Experiment/" + expID + "?json", function(data, status){
+
+    		alert(JSON.stringify(data, undefined, '\t'));
+  		});
+	}
+
+/*------------------------------- Project Section -----------------------------*/
+
+	function addProject(){
+		var owner = $("input[id=owner]").val();
+
+		var jsonObj = {};
+		jsonObj["owner"] = owner;
+
+		$.post("http://localhost:27777/storall/Project?json", JSON.stringify(jsonObj))
+			.done(function(){
+				$("#expAddSuccess").show();
+			}).fail(function(){
+				$("#expAddFail").show();
+		});	
+	}
+
+	function addProjectNotes(){
+		var pID = $("input[id=pIDn]").val();
+		var note = $("textarea[id=pnote]").val();
+
+		var jsonObj = {};
+		jsonObj["pID"] = pID;
+		jsonObj["Note"] = note;	
+
+		$.post("http://localhost:27777/storall/Project/" + pID + "?note", JSON.stringify(jsonObj))
+			.done(function(){
+				$("#expAnaSuccess").show();
+			}).fail(function(){
+				$("#expAnaFail").show();
+		});	
+	}
+
+	function findProject(){
+		var pID = $("input[id=pIDf]").val();
+
+		$.get("http://localhost:27777/storall/Project/" + pID + "?json", function(data, status){
+
+    		alert(JSON.stringify(data, undefined, '\t'));
+  		});
+	}
+
+/*-------------------------------------- Read Section ----------------------------------------------*/
+
+	function addRead(){
+
+		var location = $("input[id=rloc]").val();
+
+		var jsonObj = {};
+		jsonObj["locationOfReadData"] = location;
+
+		$.post("http://localhost:27777/storall/Read?json", JSON.stringify(jsonObj))
+			.done(function(){
+				$("#expAddSuccess").show();
+			}).fail(function(){
+				$("#expAddFail").show();
+		});	
+
+	}
+
+	function addReadNotes(){
+
+		var rID = $("input[id=rIDn]").val();
+		var note = $("textarea[id=rnote]").val();
+
+		var jsonObj = {};
+		jsonObj["rID"] = rID;
+		jsonObj["Note"] = note;	
+
+		$.post("http://localhost:27777/storall/Read/" + rID + "?note", JSON.stringify(jsonObj))
+			.done(function(){
+				$("#expAnaSuccess").show();
+			}).fail(function(){
+				$("#expAnaFail").show();
+		});
+	}
+
+	function findRead(){
+		var rID = $("input[id=rIDf]").val();
+
+		$.get("http://localhost:27777/storall/Read/" + rID + "?json", function(data, status){
+
+    		alert(JSON.stringify(data, undefined, '\t'));
+  		});
+	}
+	
+
+	function updateSystemInfo(){
+		$.get("http://localhost:27777/storall/system?allinfo", function(data, status){
+    		var jsonObj = JSON.parse(JSON.stringify(data, undefined, '\t'));
+    		$("#expCount").empty();
+    		$("#expCount").append(jsonObj.numberOfExperiments);  
+    		$("#proCount").empty();
+    		$("#proCount").append(jsonObj.numberOfProjects);	
+    		$("#readCount").empty();
+    		$("#readCount").append(jsonObj.numberOfReads);  
+    		$("#expSize").empty();
+    		$("#expSize").append(jsonObj.expSize);
+    		$("#proSize").empty();
+    		$("#proSize").append(jsonObj.proSize);	
+    		$("#readSize").empty();
+    		$("#readSize").append(jsonObj.readSize);
+  		});
+	}
 
 	function updateExpCount(){
 		$.get("http://localhost:27777/storall/system?count", function(data, status){
@@ -346,13 +390,8 @@ $(document).ready(function(){
 	}
 
 	function continuousUpdate(){
-		updateExpCount();
-		updateProCount();
-		updateReadCount();
 
-		updateExpSize();
-		updateProSize();
-		updateReadSize();
+		updateSystemInfo();
 
 		var t = setTimeout(function(){continuousUpdate()},30000);
 	}

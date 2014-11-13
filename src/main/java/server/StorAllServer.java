@@ -9,15 +9,17 @@ import main.java.server.resources.project.SingleProjectResource;
 import main.java.server.resources.read.ExperimentsUsingRead;
 import main.java.server.resources.read.ReadResource;
 import main.java.server.resources.read.SingleReadResource;
-import main.java.server.resources.system.StaticResource;
-import main.java.server.resources.system.SystemResource;
+import main.java.server.resources.system.FileServerResource;
+import main.java.server.resources.system.forms.ExperimentFormsResource;
+import main.java.server.resources.system.forms.ProjectFormsResource;
+import main.java.server.resources.system.forms.ReadFormsResource;
+import main.java.server.resources.system.help.HelpResource;
+import main.java.server.resources.system.main.StaticResource;
+import main.java.server.resources.system.info.SystemResource;
 import org.restlet.Application;
 import org.restlet.Component;
 import org.restlet.Restlet;
-import org.restlet.data.ChallengeScheme;
 import org.restlet.data.Protocol;
-import org.restlet.resource.Directory;
-import org.restlet.resource.Finder;
 import org.restlet.routing.Router;
 
 
@@ -61,11 +63,21 @@ public class StorAllServer extends Application {
         router.attach("/Read/{id}", SingleReadResource.class);
         router.attach("/Read/{id}/Experiments", ExperimentsUsingRead.class);
 
+        router.attach("", StaticResource.class);
+
         router.attach("/system", SystemResource.class);
+
+        router.attach("/help", HelpResource.class);
+
+        router.attach("/file", FileServerResource.class);
 
         router.attach("/static", StaticResource.class);
 
-        router.attach("", StaticResource.class);
+        router.attach("/forms/read", ReadFormsResource.class);
+        router.attach("/forms/project", ProjectFormsResource.class);
+        router.attach("/forms/experiment", ExperimentFormsResource.class);
+
+
 
         router.attach("/test", TestHTMLResource.class);
 

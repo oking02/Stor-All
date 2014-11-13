@@ -1,0 +1,48 @@
+<table class="table table-hover">
+	        <thead>
+	          <tr class="active">
+	            <th>Collection</th>
+	            <th>Quantity</th>
+	            <th>Size (MB)</th>
+	            <th></th>
+	          </tr>
+	        </thead>
+	        <tbody>
+	          <tr class="success">
+	            <td>Experiment</td>
+	            <td id="expCount"></td>
+	            <td id="expSize"></td>
+	            <td><button type="button" class="btn btn-primary" onclick="updateExpCount()">Refresh</button></td>
+	          </tr>
+	          <tr class="warning">
+	            <td>Project</td>
+	            <td id="proCount"></td>
+	            <td id="proSize"></td>
+	            <td><button type="button" class="btn btn-primary" onclick="updateProCount()">Refresh</button></td>
+	          </tr>
+	          <tr class="danger">
+	            <td>Read</td>
+	            <td id="readCount"></td>
+	            <td id="readSize"></td>
+	            <td><button type="button" class="btn btn-primary" onclick="updateReadCount()">Refresh</button></td>
+	          </tr>
+	        </tbody>
+        </table>
+
+        <h3>Size Information</h3>
+
+	    <div class="progress">
+		  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 10%">
+		    <span class="sr-only">40% Complete (success)</span>Experiments
+		  </div>
+       </div>
+		<div class="progress">
+  			<div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+    		<span class="sr-only">60% Complete (warning)</span>Projects
+  		</div>
+		</div>
+		<div class="progress">
+  			<div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
+    		<span class="sr-only">80% Complete (danger)</span>Reads
+  			</div>
+		</div>

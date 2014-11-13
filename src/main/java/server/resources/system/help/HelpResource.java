@@ -1,4 +1,4 @@
-package main.java.server.resources.system;
+package main.java.server.resources.system.help;
 
 import main.java.server.util.AddResponceHeaders;
 import org.restlet.data.MediaType;
@@ -12,27 +12,26 @@ import org.restlet.util.Series;
 import java.io.File;
 
 /**
- * Created by oking on 05/11/14.
+ * Created by oking on 13/11/14.
  */
-public class StaticResource extends ServerResource {
+public class HelpResource extends ServerResource {
 
-    @Get
-    public Representation getIndexPage(){
-
+    @Get("?howto")
+    public Representation getHowToPage(){
         Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
         AddResponceHeaders.addHeaders(responseHeaders, getResponse());
 
-        FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/index.html"), MediaType.TEXT_HTML);
+        FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/HelpFiles/HowTo.html"), MediaType.TEXT_HTML);
         return fileRepresentation;
     }
 
-    @Get("?js")
-    public Representation getJSPage(){
-
+    @Get("?colltype")
+    public Representation getCollTypePage(){
         Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
         AddResponceHeaders.addHeaders(responseHeaders, getResponse());
 
-        FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/scripts.js"), MediaType.APPLICATION_JAVASCRIPT);
+        FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/HelpFiles/CollectionTypes.html"), MediaType.TEXT_HTML);
         return fileRepresentation;
     }
+
 }
