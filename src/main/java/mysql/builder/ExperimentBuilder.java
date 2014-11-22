@@ -17,36 +17,28 @@ public class ExperimentBuilder {
     private Connection dbConnection;
     private Experiment experiment;
 
-    public ExperimentBuilder(Experiment exp) {
-        try {
+    public ExperimentBuilder(Experiment exp) throws SQLException {
 
-            dbConnection = ConnectionToDB.getInstance().getConnection();
-            this.experiment = exp;
+         dbConnection = ConnectionToDB.getInstance().getConnection();
+         this.experiment = exp;
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
 
-    public void build() throws Exception {
+    public void build() throws SQLException {
 
         String sqlStm = "INSERT INTO Experiments"
                 + "(ID, ProjectID, ReadID) VALUES "
                 + "(?, ?, ?)";
 
         PreparedStatement ps;
-        try {
-            ps = dbConnection.prepareStatement(sqlStm);
-            ps.setInt(1, experiment.id);
-            ps.setInt(2, experiment.projectID);
-            ps.setInt(3, experiment.readID);
-            ps.executeUpdate();
-            createFolderForExperiment();
 
-        } catch (SQLException e) {
-            sqlErrorHandling(e);
-        }
+        ps = dbConnection.prepareStatement(sqlStm);
+        ps.setInt(1, experiment.id);
+        ps.setInt(2, experiment.projectID);
+        ps.setInt(3, experiment.readID);
+        ps.executeUpdate();
+        createFolderForExperiment();
 
     }
 

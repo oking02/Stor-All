@@ -1,24 +1,20 @@
 package main.java.server.resources.experiment;
 
 import main.java.dto.*;
-import main.java.fileutils.FileTranfers;
 import main.java.fileutils.NoteController;
 import main.java.mysql.builder.AnalysisBuilder;
-import main.java.mysql.builder.ReadBuilder;
 import main.java.mysql.presenter.ExperimentPresenter;
-import main.java.mysql.presenter.ReadPresenter;
 import main.java.mysql.remover.ExperimentRemover;
 import main.java.mysql.utils.DtoToXml;
 import main.java.mysql.utils.IDGenerator;
 import main.java.mysql.utils.XMLToDto;
+import main.java.server.representations.ExperimentJsonRepresentation;
 import main.java.server.util.AddResponceHeaders;
 import main.java.server.util.GenericExporter;
-import main.java.server.util.ResourceExceptionHandling;
-import org.json.JSONArray;
+import main.java.server.responce.ResourceExceptionHandling;
+import main.java.server.responce.ResponseBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.restlet.data.MediaType;
-import org.restlet.data.Status;
 import org.restlet.engine.header.Header;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.ext.xml.DomRepresentation;
@@ -27,13 +23,9 @@ import org.restlet.resource.*;
 import org.restlet.util.Series;
 import org.w3c.dom.Document;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
-import static main.java.server.util.ResourceExceptionHandling.*;
+import static main.java.server.responce.ResourceExceptionHandling.*;
 
 /**
  * Created by oking on 02/10/14.
@@ -41,57 +33,67 @@ import static main.java.server.util.ResourceExceptionHandling.*;
 public class SingleExperimentResource extends ServerResource {
 
     @Get("?xml")
-    public Representation getExperiment() throws SQLException, ParserConfigurationException, IOException {
+    public Representation getExperiment() {
 
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         int queryExpID = Integer.parseInt(this.getAttribute("id"));
-        ExperimentPresenter experimentPresenter = new ExperimentPresenter();
-        List<TransferObject> listOfExperiment = null;
+
+        DomRepresentation domRepresentation = null;
 
         try {
 
-            listOfExperiment = experimentPresenter.getExperiment(queryExpID);
+            ExperimentPresenter experimentPresenter = new ExperimentPresenter();
+            List<TransferObject> listOfExperiment = experimentPresenter.getExperiment(queryExpID);
 
-        }catch (Exception e){
-            exceptionHandling(e, this);
+            DtoToXml dtoToXml = new DtoToXml(listOfExperiment);
+            Document document = dtoToXml.createNewXMLDocument();
+
+            domRepresentation = new DomRepresentation();
+            domRepresentation.setDocument(document);
+
+        } catch (Exception e) {
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
 
-        DtoToXml dtoToXml = new DtoToXml(listOfExperiment);
-        Document document = dtoToXml.createNewXMLDocument();
-
-        DomRepresentation domRepresentation = new DomRepresentation();
-        domRepresentation.setDocument(document);
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
         return domRepresentation;
     }
 
     @Get("?json")
-    public Representation getExperimentJson() throws Exception {
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+    public Representation getExperimentJson() throws JSONException {
 
-        int queryExpID = Integer.parseInt(this.getAttribute("id"));
-        ExperimentPresenter experimentPresenter = new ExperimentPresenter();
-        List<TransferObject> listOfExperiment = experimentPresenter.getExperiment(queryExpID);
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
+        ExperimentJsonRepresentation experimentJsonRepresentation;
+        JsonRepresentation jsonRepresentation = null;
 
-        JSONArray jsonArray = new JSONArray();
-        String[] names = new String[]{"id", "projectID", "readID", "analysis"};
+        try {
 
-        for (TransferObject transferObject : listOfExperiment){
-            JSONObject jsonObject1 = new JSONObject(transferObject, names);
-            jsonArray.put(jsonObject1);
+            int queryExpID = Integer.parseInt(this.getAttribute("id"));
+            ExperimentPresenter experimentPresenter = new ExperimentPresenter();
+            List<TransferObject> listOfExperiment = experimentPresenter.getExperiment(queryExpID);
+
+            experimentJsonRepresentation = new ExperimentJsonRepresentation(listOfExperiment);
+            jsonRepresentation = experimentJsonRepresentation.getJsonRepresentation();
+
+        } catch (Exception e){
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
-        return new JsonRepresentation(jsonArray);
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+        return jsonRepresentation;
     }
 
     @Post("?xml")
-    public void addAnalysis(Representation representation) throws IOException, ClassNotFoundException {
+    public void addAnalysis(Representation representation) {
 
         DomRepresentation domRepresentation = new DomRepresentation(representation);
-        Document document = domRepresentation.getDocument();
-
-        XMLToDto xmlToDto = new XMLToDto(document, Analysis.class);
-        List<TransferObject> listOfAnalysis = xmlToDto.convertToTransferObject();
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
         try {
+
+            Document document = domRepresentation.getDocument();
+
+            XMLToDto xmlToDto = new XMLToDto(document, Analysis.class);
+            List<TransferObject> listOfAnalysis = xmlToDto.convertToTransferObject();
 
             for (TransferObject transferObject : listOfAnalysis) {
                 Analysis analysis = (Analysis) transferObject;
@@ -101,52 +103,57 @@ public class SingleExperimentResource extends ServerResource {
             }
 
         } catch (Exception e){
-            exceptionHandling(e, this);
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
     }
 
     @Post("?json")
-    public void addAnalysisJson(JsonRepresentation representation) throws Exception {
+    public void addAnalysisJson(JsonRepresentation representation)  {
 
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
-        JSONObject jsonObject = representation.getJsonObject();
+        try {
 
-        String expID = jsonObject.getString("expID");
-        String info = jsonObject.getString("info");
-        String dataLocation = jsonObject.getString("dataLocation");
-        int id = IDGenerator.getUniqueID("Analysis");
+            JSONObject jsonObject = representation.getJsonObject();
+            String expID = jsonObject.getString("expID");
+            String info = jsonObject.getString("info");
+            String dataLocation = jsonObject.getString("dataLocation");
+            int id = IDGenerator.getUniqueID("Analysis");
 
-        Analysis analysis = new Analysis(id, Integer.parseInt(expID), info, dataLocation);
-        AnalysisBuilder analysisBuilder = new AnalysisBuilder(analysis);
-        analysisBuilder.build();
+            Analysis analysis = new Analysis(id, Integer.parseInt(expID), info, dataLocation);
+            AnalysisBuilder analysisBuilder = new AnalysisBuilder(analysis);
+            analysisBuilder.build();
+        } catch (Exception e){
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
+        }
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
     }
 
     @Post("?note")
-    public void addNotes(JsonRepresentation representation) throws JSONException, NoSuchFieldException, IOException {
+    public void addNotes(JsonRepresentation representation){
 
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         int queryExpID = Integer.parseInt(this.getAttribute("id"));
 
-        JSONObject jsonObject = representation.getJsonObject();
-        String note = jsonObject.getString("Note");
+        try {
 
+            JSONObject jsonObject = representation.getJsonObject();
+            String note = jsonObject.getString("Note");
 
-        NoteController noteController = new NoteController(queryExpID, "Experiment");
-        noteController.addNotes(note);
+            NoteController noteController = new NoteController(queryExpID, "Experiment");
+            noteController.addNotes(note);
 
+        } catch (Exception e){
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
+        }
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
     }
 
     @Put
-    public void exportExperiment(Representation representation) throws IOException, ClassNotFoundException {
+    public void exportExperiment(Representation representation) {
 
-//        DomRepresentation domRepresentation = new DomRepresentation(representation);
-//        Document document = domRepresentation.getDocument();
-//
-//        XMLToDto xmlToDto = new XMLToDto(document, Export.class);
-//        List<TransferObject> listOfExportObjects = xmlToDto.convertToTransferObject();
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
         try{
 
@@ -154,30 +161,32 @@ public class SingleExperimentResource extends ServerResource {
             genericExporter.export(representation);
 
         } catch (Exception e){
-            exceptionHandling(e, this);
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
 
     }
 
     @Delete
-    public void deleteExperiment() throws IOException, ClassNotFoundException, SQLException {
+    public void deleteExperiment() {
 
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         int queryExpID = Integer.parseInt(this.getAttribute("id"));
-        ExperimentPresenter experimentPresenter = new ExperimentPresenter();
-        List<TransferObject> listOfExperiment;
 
         try {
 
-            listOfExperiment = experimentPresenter.getExperiment(queryExpID);
+            ExperimentPresenter experimentPresenter = new ExperimentPresenter();
+            List<TransferObject> listOfExperiment = experimentPresenter.getExperiment(queryExpID);
+
             for (TransferObject experiment : listOfExperiment) {
                 ExperimentRemover experimentRemover = new ExperimentRemover((Experiment) experiment);
                 experimentRemover.remove();
             }
 
-        } catch (Exception e){
-            exceptionHandling(e, this);
-        }
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
+        } catch (Exception e){
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
+        }
     }
 
 }

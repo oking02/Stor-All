@@ -23,18 +23,15 @@ public class ExperimentIn {
     private String type;
     private Connection dbConnection;
 
-    public ExperimentIn(String type, int id) throws Exception {
+    public ExperimentIn(String type, int id) throws SQLException {
         this.id = id;
         this.type = type;
 
-        try {
-            dbConnection = ConnectionToDB.getInstance().getConnection();
-        } catch (SQLException e) {
-            SQLErrorHandling.sqlErrorHandling(e);
-        }
+        dbConnection = ConnectionToDB.getInstance().getConnection();
+
     }
 
-    public List<TransferObject> getRelatedExperiments() throws Exception {
+    public List<TransferObject> getRelatedExperiments() throws SQLException {
         switch (type) {
             case "Read":
                 return experimentsUsingRead();
@@ -45,21 +42,21 @@ public class ExperimentIn {
         }
     }
 
-    private List<TransferObject> experimentsUsingRead() throws Exception {
+    private List<TransferObject> experimentsUsingRead() throws SQLException {
         String sqlStm = "SELECT * FROM Experiments WHERE ReadID=(?)";
         PreparedStatement ps = dbConnection.prepareStatement(sqlStm);
         ps.setInt(1, id);
         return createListFromResultSet(ps.executeQuery());
     }
 
-    private List<TransferObject> experimentsUnderProject() throws Exception {
+    private List<TransferObject> experimentsUnderProject() throws SQLException {
         String sqlStm = "SELECT * FROM Experiments WHERE ProjectID=(?)";
         PreparedStatement ps = dbConnection.prepareStatement(sqlStm);
         ps.setInt(1, id);
         return createListFromResultSet(ps.executeQuery());
     }
 
-    private List<TransferObject> createListFromResultSet(ResultSet rs) throws Exception {
+    private List<TransferObject> createListFromResultSet(ResultSet rs) throws SQLException {
         List<TransferObject> transferObjectList = new ArrayList<>();
         AnalysisInExperiment analysisInExperiment = new AnalysisInExperiment();
 

@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import org.restlet.data.MediaType;
 import org.restlet.engine.header.Header;
 import org.restlet.ext.json.JsonRepresentation;
-import org.restlet.ext.json.JsonpRepresentation;
 import org.restlet.representation.FileRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Get;
@@ -18,10 +17,12 @@ import org.restlet.resource.ServerResource;
 import org.restlet.util.Series;
 
 import java.io.File;
-import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static main.java.server.responce.ResourceExceptionHandling.exceptionHandling;
 
 /**
  * Created by oking on 05/11/14.
@@ -53,54 +54,72 @@ public class SystemResource extends ServerResource {
     }
 
     @Get("?count")
-    public Representation getCountInformation() throws Exception {
+    public Representation getCountInformation() {
 
         Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
         AddResponceHeaders.addHeaders(responseHeaders, getResponse());
 
-        Map<String, Long> countInfo = buildCountInfoJson();
+        JsonRepresentation jsonRepresentation = null;
+        try {
 
-        JSONObject jsonObject = new JSONObject(countInfo);
-        JsonRepresentation jsonRepresentation = new JsonRepresentation(jsonObject);
+            Map<String, Long> countInfo = buildCountInfoJson();
+            JSONObject jsonObject = new JSONObject(countInfo);
+            jsonRepresentation = new JsonRepresentation(jsonObject);
+
+        } catch (Exception e) {
+            exceptionHandling(e, this);
+        }
 
         return jsonRepresentation;
     }
 
     @Get("?allinfo")
-    public Representation getSystemInfo() throws Exception {
+    public Representation getSystemInfo() {
         Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
         AddResponceHeaders.addHeaders(responseHeaders, getResponse());
 
+        JsonRepresentation jsonRepresentation = null;
+        try {
 
-        Map<String, Long> systemInfo = buildCountInfoJson();
-        systemInfo.putAll(buildSizeInfoJson());
+            Map<String, Long> systemInfo = buildCountInfoJson();
+            systemInfo.putAll(buildSizeInfoJson());
 
+            JSONObject jsonObject = new JSONObject(systemInfo);
+            jsonRepresentation = new JsonRepresentation(jsonObject);
 
-        JSONObject jsonObject = new JSONObject(systemInfo);
-        JsonRepresentation jsonRepresentation = new JsonRepresentation(jsonObject);
+        } catch (Exception e) {
+            exceptionHandling(e, this);
+        }
 
         return jsonRepresentation;
     }
 
-    private Map<String, Long> buildCountInfoJson() throws Exception {
-        ExperimentPresenter experimentPresenter = new ExperimentPresenter();
-        List<TransferObject> listOfExperiments = experimentPresenter.createListOfAllExperiments();
-        long numberOfExperiments = listOfExperiments.size();
+    private Map<String, Long> buildCountInfoJson() {
+        Map<String, Long> countInfo = Collections.EMPTY_MAP;
 
-        ProjectPresenter projectPresenter = new ProjectPresenter();
-        List<TransferObject> listOfProjects = projectPresenter.createListOfAllProjects();
-        long numberOfProjects = listOfProjects.size();
+        try {
+            ExperimentPresenter experimentPresenter = new ExperimentPresenter();
+            List<TransferObject> listOfExperiments = experimentPresenter.createListOfAllExperiments();
+            long numberOfExperiments = listOfExperiments.size();
 
-        ReadPresenter readPresenter = new ReadPresenter();
-        List<TransferObject> listOfReads = readPresenter.createListOfAllReads();
-        long numberOfReads = listOfReads.size();
+            ProjectPresenter projectPresenter = new ProjectPresenter();
+            List<TransferObject> listOfProjects = projectPresenter.createListOfAllProjects();
+            long numberOfProjects = listOfProjects.size();
 
-        long total = numberOfExperiments + numberOfProjects + numberOfReads;
+            ReadPresenter readPresenter = new ReadPresenter();
+            List<TransferObject> listOfReads = readPresenter.createListOfAllReads();
+            long numberOfReads = listOfReads.size();
 
-        Map<String, Long> countInfo = new HashMap<>();
-        countInfo.put("numberOfExperiments", numberOfExperiments);
-        countInfo.put("numberOfProjects", numberOfProjects);
-        countInfo.put("numberOfReads", numberOfReads);
+            long total = numberOfExperiments + numberOfProjects + numberOfReads;
+
+            countInfo = new HashMap<>();
+            countInfo.put("numberOfExperiments", numberOfExperiments);
+            countInfo.put("numberOfProjects", numberOfProjects);
+            countInfo.put("numberOfReads", numberOfReads);
+
+        } catch (Exception e) {
+            exceptionHandling(e, this);
+        }
 
         return countInfo;
     }

@@ -14,20 +14,13 @@ import static main.java.mysql.errorhandling.SQLErrorHandling.*;
  */
 public class IDGenerator {
 
-    public static synchronized int getUniqueID(String type) throws Exception {
+    public static synchronized int getUniqueID(String type) throws SQLException {
 
-        try {
+        Connection dbConnection =  ConnectionToDB.getInstance().getConnection();
+        int newId = getID(type, dbConnection);
+        updateTable(type, newId + 1, dbConnection);
+        return newId;
 
-            Connection dbConnection =  ConnectionToDB.getInstance().getConnection();
-            int newId = getID(type, dbConnection);
-            updateTable(type, newId + 1, dbConnection);
-            return newId;
-
-        } catch (SQLException e) {
-            sqlErrorHandling(e);
-            e.printStackTrace();
-        }
-        return 0;
     }
 
     private static int getID(String type, Connection dbConnection) throws SQLException {

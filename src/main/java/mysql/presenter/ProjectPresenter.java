@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Created by oking on 23/09/14.
@@ -23,32 +24,17 @@ public class ProjectPresenter {
         dbConnection = ConnectionToDB.getInstance().getConnection();
     }
 
-    public List<TransferObject> createListOfAllProjects() throws Exception {
+    public List<TransferObject> createListOfAllProjects() throws SQLException {
 
-        try {
-
-            ResultSet rs = createResultSetUsingSQLQuery();
-            return populateAListWithProjectsInfo(rs);
-
-        } catch (SQLException e) {
-            SQLErrorHandling.sqlErrorHandling(e);
-            return Collections.emptyList();
-        }
+        ResultSet rs = createResultSetUsingSQLQuery();
+        return populateAListWithProjectsInfo(rs);
 
     }
 
-    public List<TransferObject> getProject(int id) throws Exception {
+    public List<TransferObject> getProject(int id) throws SQLException {
 
-        try {
-            ResultSet rs = createResultSetUsingSQLQuery(id);
-            return populateAListWithProjectsInfo(rs);
-
-        } catch (SQLException e) {
-            SQLErrorHandling.sqlErrorHandling(e);
-            return Collections.emptyList();
-        }
-
-
+        ResultSet rs = createResultSetUsingSQLQuery(id);
+        return populateAListWithProjectsInfo(rs);
     }
 
     private ResultSet createResultSetUsingSQLQuery() throws SQLException {
@@ -66,13 +52,17 @@ public class ProjectPresenter {
         return ps.executeQuery();
     }
 
-    private List<TransferObject> populateAListWithProjectsInfo(ResultSet resultSet) throws SQLException {
+    private List<TransferObject> populateAListWithProjectsInfo(ResultSet resultSet) throws SQLException, NoSuchElementException {
         List<TransferObject> listOfProjects = new ArrayList<>();
 
         while(resultSet.next()){
             int id = resultSet.getInt("ID");
             String owner = resultSet.getString("Owner");
             listOfProjects.add(new Project(id, owner));
+        }
+
+        if (listOfProjects.isEmpty()){
+            throw new NoSuchElementException("Project Not Found");
         }
         return listOfProjects;
     }

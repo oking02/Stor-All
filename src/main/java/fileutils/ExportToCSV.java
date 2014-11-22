@@ -29,24 +29,28 @@ public class ExportToCSV {
 
     public void createCSV(String type) throws IOException {
 
-        File newCSVFile = new File(exportLocation + "/" + type + "s.csv");
-        newCSVFile.createNewFile();
+        try {
+            File newCSVFile = new File(exportLocation + "/" + type + "s.csv");
+            newCSVFile.createNewFile();
 
-        FileWriter fw = new FileWriter(newCSVFile.getAbsoluteFile(), true);
+            FileWriter fw = new FileWriter(newCSVFile.getAbsoluteFile(), true);
 
-        switch (type) {
-            case "Experiment":
-                experiment(fw);
-                break;
-            case "Project":
-                project(fw);
-                break;
-            case "Read":
-                read(fw);
-                break;
+            switch (type) {
+                case "Experiment":
+                    experiment(fw);
+                    break;
+                case "Project":
+                    project(fw);
+                    break;
+                case "Read":
+                    read(fw);
+                    break;
+            }
+            fw.close();
+        } catch (IOException e){
+            throw new IOException("Error creating or writing a CSV file");
         }
 
-        fw.close();
     }
 
     private void experiment(FileWriter fw) throws IOException {

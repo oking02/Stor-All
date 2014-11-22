@@ -16,29 +16,33 @@ public class NoteController {
     private int id;
     private String type;
 
-    public NoteController(int id, String type) throws NoSuchFieldException {
+    public NoteController(int id, String type) {
         this.id = id;
         this.type = type;
     }
 
     public void addNotes(String message) throws IOException {
 
-        File notesFile = new File(new File("").getAbsolutePath() +"/" + type + "s/" + type + "-" + id +"/notes.txt");
+        try {
+            File notesFile = new File(new File("").getAbsolutePath() + "/" + type + "s/" + type + "-" + id + "/notes.txt");
 
-        if (!doesNotFileExist(notesFile)){
-            notesFile.createNewFile();
+            if (!doesNotFileExist(notesFile)) {
+                notesFile.createNewFile();
+            }
+
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date date = new Date();
+
+            FileWriter fw = new FileWriter(notesFile, true);
+            fw.write(System.getProperty("line.separator") + "Note Entry -- " + dateFormat.format(date));
+            fw.write(System.getProperty("line.separator"));
+            fw.write(System.getProperty("line.separator") + message);
+            fw.write(System.getProperty("line.separator") + "------------------------------");
+            fw.write(System.getProperty("line.separator"));
+            fw.close();
+        } catch (IOException e){
+            throw new IOException("Error creating or writing to the Notes file");
         }
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-
-        FileWriter fw = new FileWriter(notesFile, true);
-        fw.write(System.getProperty("line.separator") + "Note Entry -- " + dateFormat.format(date));
-        fw.write(System.getProperty("line.separator"));
-        fw.write(System.getProperty("line.separator") + message);
-        fw.write(System.getProperty("line.separator") + "------------------------------");
-        fw.write(System.getProperty("line.separator"));
-        fw.close();
     }
 
     private boolean doesNotFileExist(File file){

@@ -28,24 +28,22 @@ public class ProjectBuilder {
         }
     }
 
-    public void build() throws Exception {
+    public void build() throws SQLException {
         String sqlStm = "INSERT INTO Projects"
                 + "(ID, Owner) VALUES "
                 + "(?, ?)";
 
         PreparedStatement ps = null;
-        try {
 
-            ps = dbConnection.prepareStatement(sqlStm);
-            ps.setInt(1, project.id);
-            ps.setString(2, project.owner);
-            ps.executeUpdate();
-            createFolderForProject();
 
-        } catch (SQLException e) {
-            sqlErrorHandling(e);
-        }
+        ps = dbConnection.prepareStatement(sqlStm);
+        ps.setInt(1, project.id);
+        ps.setString(2, project.owner);
+        ps.executeUpdate();
+        createFolderForProject();
+
     }
+
 
     private void createFolderForProject(){
         String newFolderLocation = new File("").getAbsolutePath() + "/Projects/Project-" + project.id + "";

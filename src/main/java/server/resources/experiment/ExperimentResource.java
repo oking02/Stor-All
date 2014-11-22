@@ -6,31 +6,24 @@ import main.java.dto.TransferObject;
 import main.java.fileutils.ExportToCSV;
 import main.java.mysql.builder.ExperimentBuilder;
 import main.java.mysql.presenter.ExperimentPresenter;
-import main.java.mysql.remover.ExperimentRemover;
 import main.java.mysql.utils.DtoToXml;
 
 import main.java.mysql.utils.IDGenerator;
 import main.java.mysql.utils.XMLToDto;
+import main.java.server.representations.ExperimentJsonRepresentation;
 import main.java.server.util.AddResponceHeaders;
-import main.java.server.util.ResourceExceptionHandling;
-import org.json.JSONArray;
-import org.json.JSONException;
+import main.java.server.responce.ResourceExceptionHandling;
+import main.java.server.responce.ResponseBuilder;
 import org.json.JSONObject;
-import org.restlet.data.Form;
-import org.restlet.data.MediaType;
-import org.restlet.data.Status;
 import org.restlet.engine.header.Header;
 import org.restlet.ext.json.JsonRepresentation;
-import org.restlet.ext.json.JsonpRepresentation;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.*;
 import org.restlet.util.Series;
 import org.w3c.dom.Document;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -41,55 +34,60 @@ public class ExperimentResource extends ServerResource {
 
 
     @Get("?xml")
-    public Representation getExperiments() throws IOException, SQLException, ParserConfigurationException {
+    public Representation getExperiments() throws IOException {
 
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
         AddResponceHeaders.addHeaders(responseHeaders, getResponse());
 
-        ExperimentPresenter experimentPresenter = new ExperimentPresenter();
-        List<TransferObject> listOfExperiments = null;
+        DomRepresentation domRepresentation = new DomRepresentation();
 
         try {
 
-            listOfExperiments = experimentPresenter.createListOfAllExperiments();
+            ExperimentPresenter experimentPresenter = new ExperimentPresenter();
+            List<TransferObject> listOfExperiments = experimentPresenter.createListOfAllExperiments();
+
+            DtoToXml toXmlDocument = new DtoToXml(listOfExperiments);
+            Document document = toXmlDocument.createNewXMLDocument();
+
+
+            domRepresentation.setDocument(document);
+            domRepresentation.setIndenting(true);
+
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+            return domRepresentation;
 
         } catch (Exception e) {
-            ResourceExceptionHandling.exceptionHandling(e, this);
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
 
-        DtoToXml toXmlDocument = new DtoToXml(listOfExperiments);
-        Document document = toXmlDocument.createNewXMLDocument();
-
-        DomRepresentation domRepresentation = new DomRepresentation();
-        domRepresentation.setDocument(document);
-        domRepresentation.setIndenting(true);
-        return domRepresentation;
     }
 
     @Get ("?json")
     public JsonRepresentation getExpJson() throws Exception {
 
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
-        ExperimentPresenter experimentPresenter = new ExperimentPresenter();
-        List<TransferObject> listOfExperiments = experimentPresenter.createListOfAllExperiments();
+        ExperimentJsonRepresentation experimentJsonRepresentation = null;
 
-        JSONArray jsonArray = new JSONArray();
-        String[] names = new String[]{"id", "projectID", "readID", "analysis"};
+        try {
 
-        for (TransferObject transferObject : listOfExperiments){
-            JSONObject jsonObject1 = new JSONObject(transferObject, names);
-            jsonArray.put(jsonObject1);
+            ExperimentPresenter experimentPresenter = new ExperimentPresenter();
+            List<TransferObject> listOfExperiments = experimentPresenter.createListOfAllExperiments();
+            experimentJsonRepresentation = new ExperimentJsonRepresentation(listOfExperiments);
+
+        } catch (Exception e) {
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
-        return new JsonRepresentation(jsonArray);
+
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+        return experimentJsonRepresentation.getJsonRepresentation();
     }
 
     @Post("?xml")
     public void addExperiment(Representation representation) throws IOException, ClassNotFoundException {
 
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
         DomRepresentation domRepresentation = new DomRepresentation(representation);
         Document document = domRepresentation.getDocument();
@@ -105,17 +103,17 @@ public class ExperimentResource extends ServerResource {
                 ExperimentBuilder experimentBuilder = new ExperimentBuilder(experiment1);
                 experimentBuilder.build();
             }
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
-        }catch (Exception e){
-            ResourceExceptionHandling.exceptionHandling(e, this);
+        } catch (Exception e){
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
     }
 
     @Post("?json")
     public void addExperimentUsingJson(JsonRepresentation representation) throws Exception {
 
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
         JSONObject jsonObject = representation.getJsonObject();
 
@@ -123,33 +121,44 @@ public class ExperimentResource extends ServerResource {
         String readID = jsonObject.getString("readID");
         int id = IDGenerator.getUniqueID("Experiment");
 
-        Experiment experiment = new Experiment(id, Integer.parseInt(projectID), Integer.parseInt(readID));
-        ExperimentBuilder experimentBuilder = new ExperimentBuilder(experiment);
-        experimentBuilder.build();
+        try {
+
+            Experiment experiment = new Experiment(id, Integer.parseInt(projectID), Integer.parseInt(readID));
+            ExperimentBuilder experimentBuilder = new ExperimentBuilder(experiment);
+            experimentBuilder.build();
+
+        } catch (Exception e){
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
+        }
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
     }
 
     @Post("?csv")
     public void exportCSV(Representation representation) throws Exception {
 
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
 
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         DomRepresentation domRepresentation = new DomRepresentation(representation);
         Document document = domRepresentation.getDocument();
 
-        XMLToDto xmlToDto = new XMLToDto(document, Export.class);
-        List<TransferObject> listOfExportObjects = xmlToDto.convertToTransferObject();
+        try {
 
-        ExperimentPresenter experimentPresenter = new ExperimentPresenter();
-        List<TransferObject> listOfExperiment = experimentPresenter.createListOfAllExperiments();
+            XMLToDto xmlToDto = new XMLToDto(document, Export.class);
+            List<TransferObject> listOfExportObjects = xmlToDto.convertToTransferObject();
 
-        for (TransferObject transferObject : listOfExportObjects){
-            Export export = (Export) transferObject;
-            ExportToCSV exportToCSV = new ExportToCSV(export.locationToExportTo, listOfExperiment);
-            exportToCSV.createCSV(export.objectType);
+            ExperimentPresenter experimentPresenter = new ExperimentPresenter();
+            List<TransferObject> listOfExperiment = experimentPresenter.createListOfAllExperiments();
+
+            for (TransferObject transferObject : listOfExportObjects) {
+                Export export = (Export) transferObject;
+                ExportToCSV exportToCSV = new ExportToCSV(export.locationToExportTo, listOfExperiment);
+                exportToCSV.createCSV(export.objectType);
+            }
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
+        } catch (Exception e){
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
-
     }
-
 }

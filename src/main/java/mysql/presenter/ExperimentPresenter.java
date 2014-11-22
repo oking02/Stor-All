@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static main.java.mysql.errorhandling.SQLErrorHandling.sqlErrorHandling;
 
@@ -26,30 +27,18 @@ public class ExperimentPresenter {
         this.dbConnection = ConnectionToDB.getInstance().getConnection();
     }
 
-    public List<TransferObject> createListOfAllExperiments() throws Exception {
+    public List<TransferObject> createListOfAllExperiments() throws SQLException {
 
-        try {
-
-            ResultSet rs = createResultSetUsingSQLQuery();
-            return populateAListWithExperimentsInfo(rs);
-
-        } catch (SQLException e) {
-            sqlErrorHandling(e);
-            return Collections.emptyList();
-        }
+        ResultSet rs = createResultSetUsingSQLQuery();
+        return populateAListWithExperimentsInfo(rs);
 
     }
 
-    public List<TransferObject> getExperiment(int id) throws Exception {
+    public List<TransferObject> getExperiment(int id) throws SQLException {
 
-        try {
-            ResultSet rs = createResultSetUsingSQLQuery(id);
-            return populateAListWithExperimentsInfo(rs);
-        } catch (SQLException e) {
-            sqlErrorHandling(e);
-        }
+        ResultSet rs = createResultSetUsingSQLQuery(id);
+        return populateAListWithExperimentsInfo(rs);
 
-        return null;
     }
 
     private ResultSet createResultSetUsingSQLQuery() throws SQLException {
@@ -68,11 +57,9 @@ public class ExperimentPresenter {
         return ps.executeQuery();
     }
 
-    private List<TransferObject> populateAListWithExperimentsInfo(ResultSet resultSet) throws Exception {
+    private List<TransferObject> populateAListWithExperimentsInfo(ResultSet resultSet) throws SQLException, NoSuchElementException {
         List<TransferObject> listOfExperiments = new ArrayList<>();
         AnalysisInExperiment analysisInExperiment = new AnalysisInExperiment();
-
-        try {
 
             while(resultSet.next()){
 
@@ -88,10 +75,10 @@ public class ExperimentPresenter {
                 listOfExperiments.add(experiment);
 
             }
-        } catch (SQLException e) {
-            sqlErrorHandling(e);
-            return Collections.emptyList();
+        if (listOfExperiments.isEmpty()){
+            throw new NoSuchElementException("Experiment Not Found");
         }
+
         return listOfExperiments;
     }
 }

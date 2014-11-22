@@ -9,6 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Created by oking on 26/09/14.
@@ -16,40 +17,24 @@ import java.util.List;
 public class ReadPresenter {
     private Connection dbConnection;
 
-    public ReadPresenter() throws Exception {
+    public ReadPresenter() throws SQLException {
 
-        try {
-            dbConnection = ConnectionToDB.getInstance().getConnection();
-        } catch (SQLException e) {
-            SQLErrorHandling.sqlErrorHandling(e);
-            e.printStackTrace();
-        }
+        dbConnection = ConnectionToDB.getInstance().getConnection();
+
     }
 
 
-    public List<TransferObject> createListOfAllReads() throws Exception {
+    public List<TransferObject> createListOfAllReads() throws SQLException {
 
-        try {
+        ResultSet rs = createResultSetUsingSQLQuery();
+        return populateAListWithProjectsInfo(rs);
 
-            ResultSet rs = createResultSetUsingSQLQuery();
-            return populateAListWithProjectsInfo(rs);
-
-        } catch (SQLException e) {
-            SQLErrorHandling.sqlErrorHandling(e);
-            return Collections.emptyList();
-        }
     }
 
-    public List<TransferObject> getRead(int id) throws Exception {
+    public List<TransferObject> getRead(int id) throws SQLException {
 
-        try {
-            ResultSet rs = createResultSetUsingSQLQuery(id);
-            return populateAListWithProjectsInfo(rs);
-
-        } catch (SQLException e) {
-            SQLErrorHandling.sqlErrorHandling(e);
-            return Collections.emptyList();
-        }
+        ResultSet rs = createResultSetUsingSQLQuery(id);
+        return populateAListWithProjectsInfo(rs);
     }
 
     private ResultSet createResultSetUsingSQLQuery() throws SQLException {
@@ -66,11 +51,15 @@ public class ReadPresenter {
         return ps.executeQuery();
     }
 
-    private List<TransferObject> populateAListWithProjectsInfo(ResultSet resultSet) throws SQLException {
+    private List<TransferObject> populateAListWithProjectsInfo(ResultSet resultSet) throws SQLException, NoSuchElementException {
         List<TransferObject> listOfProjects = new ArrayList<>();
 
         while(resultSet.next()){
             listOfProjects.add(new Read(resultSet.getInt("ID"), "Location"));
+        }
+
+        if (listOfProjects.isEmpty()){
+            throw new NoSuchElementException("Read Not Found");
         }
         return listOfProjects;
     }

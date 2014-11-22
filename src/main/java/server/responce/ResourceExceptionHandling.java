@@ -1,4 +1,4 @@
-package main.java.server.util;
+package main.java.server.responce;
 
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
@@ -14,5 +14,6 @@ public class ResourceExceptionHandling {
         resource.getResponse().setEntity(e.getMessage(), MediaType.TEXT_PLAIN);
         Status status = new Status(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
         throw new ResourceException(status);
+
     }
 }

@@ -2,6 +2,7 @@ package main.java.server;
 
 import main.java.dto.*;
 import main.java.fileutils.NoteController;
+import main.java.mysql.utils.AnalysisInExperiment;
 import main.java.mysql.utils.DtoToXml;
 import main.java.mysql.utils.XMLToDto;
 import main.java.server.resources.experiment.ExperimentResource;
@@ -29,8 +30,9 @@ public class TestScript {
     public static void main(String[] args) throws Exception {
 
 
-
-        System.out.println(new File("").getAbsolutePath() + "/web/StaticFiles/index.html");
+        AnalysisInExperiment analysisInExperiment = new AnalysisInExperiment();
+        System.out.println(
+                analysisInExperiment.getExperimentAnalysisInfo(8));
 
     }
 

@@ -16,7 +16,7 @@ public class FileTranfers {
     private String sourceLocation;
     private String destinationLocation;
 
-    public FileTranfers(String sourceLocation, String destinationLocation) throws FileNotFoundException {
+    public FileTranfers(String sourceLocation, String destinationLocation) {
         fileThreadController = new FileThreadController();
         this.sourceLocation = sourceLocation;
         this.destinationLocation = destinationLocation;
@@ -30,7 +30,11 @@ public class FileTranfers {
         fileThreadController.copier(sourceLocation, destinationLocation, sourceSubDirectories);
 
         for ( String file : sourceRootFiles){
-            FileUtils.copyFileToDirectory(new File(sourceLocation + "/" + file), new File(destinationLocation));
+            try {
+                FileUtils.copyFileToDirectory(new File(sourceLocation + "/" + file), new File(destinationLocation));
+            } catch (IOException e) {
+                throw new IOException("IO error when transferring " + file);
+            }
         }
 
     }

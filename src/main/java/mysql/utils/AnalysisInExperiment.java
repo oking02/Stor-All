@@ -20,50 +20,37 @@ import static main.java.mysql.errorhandling.SQLErrorHandling.sqlErrorHandling;
 public class AnalysisInExperiment {
     private Connection dbConnection;
 
-    public AnalysisInExperiment() throws Exception {
-        try {
-            this.dbConnection = ConnectionToDB.getInstance().getConnection();
-        } catch (SQLException e) {
-            SQLErrorHandling.sqlErrorHandling(e);
-        }
+    public AnalysisInExperiment() throws SQLException {
+
+        this.dbConnection = ConnectionToDB.getInstance().getConnection();
+
     }
 
-    public List<TransferObject> getExperimentAnalysisInfo(int expID) throws Exception {
+    public List<TransferObject> getExperimentAnalysisInfo(int expID) throws SQLException {
 
         ResultSet rs = createAnalysisResultSet(expID);
         return createListOfAnalysis(rs, expID);
 
     }
 
-    private ResultSet createAnalysisResultSet(int expID) throws Exception {
+    private ResultSet createAnalysisResultSet(int expID) throws SQLException {
         String sqlStm = "SELECT * FROM Analysis"
                 + " WHERE ExpID=(?)";
         PreparedStatement ps = null;
 
-        try {
+        ps = dbConnection.prepareStatement(sqlStm);
+        ps.setInt(1, expID);
+        return ps.executeQuery();
 
-            ps = dbConnection.prepareStatement(sqlStm);
-            ps.setInt(1, expID);
-            return ps.executeQuery();
-
-        } catch (SQLException e) {
-            sqlErrorHandling(e);
-        }
-        return null;
     }
 
-    private List<TransferObject> createListOfAnalysis(ResultSet resultSet, int expID) throws Exception {
+    private List<TransferObject> createListOfAnalysis(ResultSet resultSet, int expID) throws SQLException {
         List<TransferObject> analysisList = new ArrayList<>();
 
-        try {
             while (resultSet.next()){
                 Analysis analysis = new Analysis(resultSet.getInt("ID"), expID, resultSet.getString("Info"), "");
                 analysisList.add(analysis);
             }
-        } catch (SQLException e) {
-            sqlErrorHandling(e);
-            return Collections.emptyList();
-        }
         return analysisList;
     }
 }

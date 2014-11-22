@@ -1,21 +1,15 @@
 package main.java.server.resources.project;
 
-import main.java.dto.Analysis;
 import main.java.dto.Project;
 import main.java.dto.TransferObject;
 import main.java.fileutils.NoteController;
-import main.java.mysql.builder.AnalysisBuilder;
-import main.java.mysql.presenter.ExperimentPresenter;
 import main.java.mysql.presenter.ProjectPresenter;
 import main.java.mysql.remover.ProjectRemover;
 import main.java.mysql.utils.DtoToXml;
-import main.java.mysql.utils.IDGenerator;
-import main.java.mysql.utils.XMLToDto;
+import main.java.server.representations.ProjectJsonResource;
+import main.java.server.responce.ResponseBuilder;
 import main.java.server.util.AddResponceHeaders;
 import main.java.server.util.GenericExporter;
-import main.java.server.util.ResourceExceptionHandling;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.restlet.engine.header.Header;
 import org.restlet.ext.json.JsonRepresentation;
@@ -25,12 +19,9 @@ import org.restlet.resource.*;
 import org.restlet.util.Series;
 import org.w3c.dom.Document;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
-import static main.java.server.util.ResourceExceptionHandling.*;
+import static main.java.server.responce.ResourceExceptionHandling.*;
 
 /**
  * Created by oking on 02/10/14.
@@ -38,95 +29,107 @@ import static main.java.server.util.ResourceExceptionHandling.*;
 public class SingleProjectResource extends ServerResource {
 
     @Get("?xml")
-    public Representation getProject() throws SQLException, ParserConfigurationException, IOException {
+    public Representation getProject() {
 
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         int queryID = Integer.parseInt(this.getAttribute("id"));
-        ProjectPresenter projectPresenter = new ProjectPresenter();
 
         List<TransferObject> list = null;
+        DomRepresentation domRepresentation = null;
         try {
 
+            ProjectPresenter projectPresenter = new ProjectPresenter();
             list = projectPresenter.getProject(queryID);
 
+            DtoToXml dtoToXml = new DtoToXml(list);
+            Document document = dtoToXml.createNewXMLDocument();
+
+            domRepresentation = new DomRepresentation();
+            domRepresentation.setDocument(document);
+
         } catch (Exception e) {
-            exceptionHandling(e, this);
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
-
-        DtoToXml dtoToXml = new DtoToXml(list);
-        Document document = dtoToXml.createNewXMLDocument();
-
-        DomRepresentation domRepresentation = new DomRepresentation();
-        domRepresentation.setDocument(document);
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
         return domRepresentation;
     }
 
     @Get("?json")
     public Representation getProjectJson() throws Exception {
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
-        int queryExpID = Integer.parseInt(this.getAttribute("id"));
-        ProjectPresenter projectPresenter = new ProjectPresenter();
-        List<TransferObject> listOfProject = projectPresenter.getProject(queryExpID);
+        ProjectJsonResource projectJsonResource = null;
+        try {
 
-        JSONArray jsonArray = new JSONArray();
-        String[] names = new String[]{"id", "owner"};
+            int queryExpID = Integer.parseInt(this.getAttribute("id"));
+            ProjectPresenter projectPresenter = new ProjectPresenter();
+            List<TransferObject> listOfProject = projectPresenter.getProject(queryExpID);
 
-        for (TransferObject transferObject : listOfProject){
-            JSONObject jsonObject1 = new JSONObject(transferObject, names);
-            jsonArray.put(jsonObject1);
+            projectJsonResource = new ProjectJsonResource(listOfProject);
+
+        } catch (Exception e) {
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
-        return new JsonRepresentation(jsonArray);
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+        return projectJsonResource.getJsonRepresentation();
     }
 
     @Post("?note")
-    public void addNotes(JsonRepresentation representation) throws JSONException, NoSuchFieldException, IOException {
+    public void addNotes(JsonRepresentation representation) {
 
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         int queryExpID = Integer.parseInt(this.getAttribute("id"));
 
-        JSONObject jsonObject = representation.getJsonObject();
-        String note = jsonObject.getString("Note");
+        try {
 
+            JSONObject jsonObject = representation.getJsonObject();
+            String note = jsonObject.getString("Note");
 
-        NoteController noteController = new NoteController(queryExpID, "Project");
-        noteController.addNotes(note);
+            NoteController noteController = new NoteController(queryExpID, "Project");
+            noteController.addNotes(note);
+
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+        } catch (Exception e) {
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
+        }
 
     }
 
     @Put
     public void exportProject(Representation representation){
 
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         try {
 
             GenericExporter genericExporter = new GenericExporter();
             genericExporter.export(representation);
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
         } catch (Exception e) {
-            exceptionHandling(e, this);
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
-
     }
 
 
     @Delete
-    public void deleteProject() throws IOException, ClassNotFoundException, SQLException {
+    public void deleteProject(){
 
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         int queryID = Integer.parseInt(this.getAttribute("id"));
-        ProjectPresenter projectPresenter = new ProjectPresenter();
 
         try {
 
+            ProjectPresenter projectPresenter = new ProjectPresenter();
             List<TransferObject> list = projectPresenter.getProject(queryID);
 
             for (TransferObject transferObject : list) {
                 ProjectRemover projectRemover = new ProjectRemover((Project) transferObject);
                 projectRemover.remove();
             }
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
         }catch (Exception e){
-            exceptionHandling(e, this);
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
     }
 }

@@ -8,6 +8,7 @@ import main.java.dto.Analysis;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileSystemException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -22,18 +23,14 @@ public class AnalysisBuilder{
     private Connection dbConnection;
     private Analysis analysis;
 
-    public AnalysisBuilder(Analysis analysis) throws Exception {
-        try {
+    public AnalysisBuilder(Analysis analysis) throws SQLException {
 
-            dbConnection = ConnectionToDB.getInstance().getConnection();
-            this.analysis = analysis;
+        dbConnection = ConnectionToDB.getInstance().getConnection();
+        this.analysis = analysis;
 
-        } catch (SQLException e) {
-            sqlErrorHandling(e);
-        }
     }
 
-    public void build() throws Exception {
+    public void build() throws InterruptedException, SQLException, FileNotFoundException, FileSystemException{
 
         validateInputDataFolder(analysis.dataLocation);
         executeSQLInsert();
@@ -61,9 +58,13 @@ public class AnalysisBuilder{
         newFolder.mkdir();
     }
 
-    private void moveDataFilesToNewFolder() throws IOException, InterruptedException {
-        FileTranfers fileTranfers = new FileTranfers(analysis.dataLocation, new File("").getAbsolutePath() +
-                "/Experiments/Experiment-" + analysis.expID + "/Analysis-" + analysis.id + "-" + analysis.info);
-        fileTranfers.transfer();
+    private void moveDataFilesToNewFolder() throws InterruptedException, FileSystemException {
+        try {
+            FileTranfers fileTranfers = new FileTranfers(analysis.dataLocation, new File("").getAbsolutePath() +
+                    "/Experiments/Experiment-" + analysis.expID + "/Analysis-" + analysis.id + "-" + analysis.info);
+            fileTranfers.transfer();
+        } catch (IOException e){
+            throw new FileSystemException("Error Moving Files");
+        }
     }
 }

@@ -19,28 +19,20 @@ public class ProjectRemover implements Remover {
     private Project project;
     private Connection dbConnection;
 
-    public ProjectRemover(Project project) throws Exception {
+    public ProjectRemover(Project project) throws SQLException {
         this.project = project;
 
-        try {
-            dbConnection = ConnectionToDB.getInstance().getConnection();
-        } catch (SQLException e) {
-            sqlErrorHandling(e);
-        }
+        dbConnection = ConnectionToDB.getInstance().getConnection();
+
     }
 
-    public void remove() throws Exception {
+    public void remove() throws SQLException {
 
         String sqlStm = "DELETE FROM Projects WHERE ID = (?)";
 
-        try {
+        runDeleteStatement(sqlStm);
+        deleteFiles();
 
-            runDeleteStatement(sqlStm);
-            deleteFiles();
-
-        } catch (SQLException e) {
-            sqlErrorHandling(e);
-        }
     }
 
     private void runDeleteStatement(String sqlStm) throws SQLException {

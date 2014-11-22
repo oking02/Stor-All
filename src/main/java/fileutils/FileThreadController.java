@@ -12,8 +12,7 @@ public class FileThreadController {
     private Semaphore semaphore;
 
 
-    public FileThreadController() throws FileNotFoundException {
-
+    public FileThreadController() {
         semaphore = new Semaphore(4, false);
     }
 

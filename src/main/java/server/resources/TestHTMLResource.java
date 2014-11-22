@@ -3,6 +3,7 @@ package main.java.server.resources;
 import main.java.dto.Experiment;
 import main.java.server.util.AddResponceHeaders;
 import org.json.JSONObject;
+import org.restlet.data.Form;
 import org.restlet.engine.header.Header;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.ext.json.JsonpRepresentation;
@@ -11,6 +12,7 @@ import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Get;
 import org.restlet.resource.Options;
+import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 import org.restlet.util.Series;
 
@@ -21,6 +23,11 @@ import java.util.Map;
  * Created by oking on 20/10/14.
  */
 public class TestHTMLResource extends ServerResource {
+
+    @Post("form")
+    public void formTest(Form form){
+
+    }
 
     @Get("?txt")
     public Representation get(){
