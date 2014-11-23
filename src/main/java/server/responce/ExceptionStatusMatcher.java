@@ -1,4 +1,4 @@
-package main.java.server.util;
+package main.java.server.responce;
 
 import main.java.mysql.errorhandling.SQLErrorHandling;
 import org.restlet.data.Status;

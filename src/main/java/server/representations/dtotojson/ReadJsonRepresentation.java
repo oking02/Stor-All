@@ -1,4 +1,4 @@
-package main.java.server.representations;
+package main.java.server.representations.dtotojson;
 
 import main.java.dto.TransferObject;
 import org.json.JSONArray;
@@ -10,12 +10,11 @@ import java.util.List;
 /**
  * Created by oking on 22/11/14.
  */
-public class ReadJsonRepresentation {
-    private List<TransferObject> readList;
+public class ReadJsonRepresentation extends DtoToRepresentation {
     private String[] readKeyValues = new String[]{"id"};
 
     public ReadJsonRepresentation(List<TransferObject> readList){
-        this.readList = readList;
+        super(readList);
     }
 
     public JsonRepresentation getJsonRepresentation(){
@@ -25,7 +24,7 @@ public class ReadJsonRepresentation {
     public JSONArray getJsonArray(){
         JSONArray jsonArray = new JSONArray();
 
-        for (TransferObject transferObject : readList) {
+        for (TransferObject transferObject : getDtoList()) {
             JSONObject jsonObject1 = new JSONObject(transferObject, readKeyValues);
             jsonArray.put(jsonObject1);
         }

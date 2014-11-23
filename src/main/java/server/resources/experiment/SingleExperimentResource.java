@@ -1,31 +1,30 @@
 package main.java.server.resources.experiment;
 
 import main.java.dto.*;
+import main.java.dtoadapters.dtodeleter.DtoDeleter;
+import main.java.dtoadapters.dtodeleter.ExperimentDeleter;
+import main.java.dtoadapters.dtofinders.DtoFinder;
+import main.java.dtoadapters.dtofinders.ExperimentFinder;
+import main.java.dtoadapters.dtoupdate.DtoUpdater;
+import main.java.dtoadapters.dtoupdate.ExperimentUpdate;
 import main.java.fileutils.NoteController;
 import main.java.mysql.builder.AnalysisBuilder;
 import main.java.mysql.presenter.ExperimentPresenter;
-import main.java.mysql.remover.ExperimentRemover;
 import main.java.mysql.utils.DtoToXml;
 import main.java.mysql.utils.IDGenerator;
 import main.java.mysql.utils.XMLToDto;
-import main.java.server.representations.ExperimentJsonRepresentation;
-import main.java.server.util.AddResponceHeaders;
+import main.java.server.representations.dtotojson.ExperimentJsonRepresentation;
 import main.java.server.util.GenericExporter;
-import main.java.server.responce.ResourceExceptionHandling;
 import main.java.server.responce.ResponseBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.restlet.engine.header.Header;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.*;
-import org.restlet.util.Series;
 import org.w3c.dom.Document;
 
 import java.util.List;
-
-import static main.java.server.responce.ResourceExceptionHandling.*;
 
 /**
  * Created by oking on 02/10/14.
@@ -64,20 +63,20 @@ public class SingleExperimentResource extends ServerResource {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         ExperimentJsonRepresentation experimentJsonRepresentation;
-        JsonRepresentation jsonRepresentation = null;
+        JsonRepresentation jsonRepresentation;
+        DtoFinder experimentFinder = new ExperimentFinder();
+        int queryExpID = Integer.parseInt(this.getAttribute("id"));
 
         try {
 
-            int queryExpID = Integer.parseInt(this.getAttribute("id"));
-            ExperimentPresenter experimentPresenter = new ExperimentPresenter();
-            List<TransferObject> listOfExperiment = experimentPresenter.getExperiment(queryExpID);
-
+            List<TransferObject> listOfExperiment = experimentFinder.findOne(queryExpID);
             experimentJsonRepresentation = new ExperimentJsonRepresentation(listOfExperiment);
             jsonRepresentation = experimentJsonRepresentation.getJsonRepresentation();
 
         } catch (Exception e){
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
+
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
         return jsonRepresentation;
     }
@@ -112,6 +111,7 @@ public class SingleExperimentResource extends ServerResource {
     public void addAnalysisJson(JsonRepresentation representation)  {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
+        DtoUpdater experimentUpdate = new ExperimentUpdate();
 
         try {
 
@@ -122,8 +122,7 @@ public class SingleExperimentResource extends ServerResource {
             int id = IDGenerator.getUniqueID("Analysis");
 
             Analysis analysis = new Analysis(id, Integer.parseInt(expID), info, dataLocation);
-            AnalysisBuilder analysisBuilder = new AnalysisBuilder(analysis);
-            analysisBuilder.build();
+            experimentUpdate.update(analysis);
         } catch (Exception e){
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
@@ -170,6 +169,7 @@ public class SingleExperimentResource extends ServerResource {
     public void deleteExperiment() {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
+        DtoDeleter dtoDeleter = new ExperimentDeleter();
         int queryExpID = Integer.parseInt(this.getAttribute("id"));
 
         try {
@@ -178,8 +178,7 @@ public class SingleExperimentResource extends ServerResource {
             List<TransferObject> listOfExperiment = experimentPresenter.getExperiment(queryExpID);
 
             for (TransferObject experiment : listOfExperiment) {
-                ExperimentRemover experimentRemover = new ExperimentRemover((Experiment) experiment);
-                experimentRemover.remove();
+                dtoDeleter.delete(experiment);
             }
 
             responseBuilder.addSuccessStatus(getRequest().getMethod().getName());

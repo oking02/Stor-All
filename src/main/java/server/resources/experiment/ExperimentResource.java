@@ -3,6 +3,8 @@ package main.java.server.resources.experiment;
 import main.java.dto.Experiment;
 import main.java.dto.Export;
 import main.java.dto.TransferObject;
+import main.java.dtoadapters.dtofinders.DtoFinder;
+import main.java.dtoadapters.dtofinders.ExperimentFinder;
 import main.java.fileutils.ExportToCSV;
 import main.java.mysql.builder.ExperimentBuilder;
 import main.java.mysql.presenter.ExperimentPresenter;
@@ -10,9 +12,10 @@ import main.java.mysql.utils.DtoToXml;
 
 import main.java.mysql.utils.IDGenerator;
 import main.java.mysql.utils.XMLToDto;
-import main.java.server.representations.ExperimentJsonRepresentation;
-import main.java.server.util.AddResponceHeaders;
-import main.java.server.responce.ResourceExceptionHandling;
+import main.java.server.representations.dtotojson.ExperimentJsonRepresentation;
+import main.java.server.representations.jsontodto.JsonToDto;
+import main.java.server.representations.jsontodto.JsonToExperiment;
+import main.java.server.responce.AddResponceHeaders;
 import main.java.server.responce.ResponseBuilder;
 import org.json.JSONObject;
 import org.restlet.engine.header.Header;
@@ -30,8 +33,7 @@ import java.util.List;
  * Created by oking on 22/09/14.
  */
 public class ExperimentResource extends ServerResource {
-
-
+    private ResponseBuilder responseBuilder;
 
     @Get("?xml")
     public Representation getExperiments() throws IOException {
@@ -66,22 +68,16 @@ public class ExperimentResource extends ServerResource {
     @Get ("?json")
     public JsonRepresentation getExpJson() throws Exception {
 
-        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
-
-        ExperimentJsonRepresentation experimentJsonRepresentation = null;
-
         try {
-
-            ExperimentPresenter experimentPresenter = new ExperimentPresenter();
-            List<TransferObject> listOfExperiments = experimentPresenter.createListOfAllExperiments();
-            experimentJsonRepresentation = new ExperimentJsonRepresentation(listOfExperiments);
+            responseBuilder = new ResponseBuilder(getResponse());
+            DtoFinder findExperiment = new ExperimentFinder();
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+            return new ExperimentJsonRepresentation(findExperiment.findAll()).getJsonRepresentation();
 
         } catch (Exception e) {
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
 
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
-        return experimentJsonRepresentation.getJsonRepresentation();
     }
 
     @Post("?xml")
@@ -111,27 +107,21 @@ public class ExperimentResource extends ServerResource {
     }
 
     @Post("?json")
-    public void addExperimentUsingJson(JsonRepresentation representation) throws Exception {
-
-        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
-
-        JSONObject jsonObject = representation.getJsonObject();
-
-        String projectID = jsonObject.getString("projectID");
-        String readID = jsonObject.getString("readID");
-        int id = IDGenerator.getUniqueID("Experiment");
+    public void addExperimentUsingJson(JsonRepresentation representation) {
 
         try {
 
-            Experiment experiment = new Experiment(id, Integer.parseInt(projectID), Integer.parseInt(readID));
+            responseBuilder = new ResponseBuilder(getResponse());
+            JsonToDto jsonToExperiment = new JsonToExperiment(representation);
+            Experiment experiment = (Experiment) jsonToExperiment.getDto();
+            experiment.id = IDGenerator.getUniqueID("Experiment");
             ExperimentBuilder experimentBuilder = new ExperimentBuilder(experiment);
             experimentBuilder.build();
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
         } catch (Exception e){
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
-
     }
 
     @Post("?csv")
@@ -161,4 +151,5 @@ public class ExperimentResource extends ServerResource {
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
     }
+
 }

@@ -6,22 +6,17 @@ import main.java.fileutils.NoteController;
 import main.java.mysql.presenter.ProjectPresenter;
 import main.java.mysql.remover.ProjectRemover;
 import main.java.mysql.utils.DtoToXml;
-import main.java.server.representations.ProjectJsonResource;
+import main.java.server.representations.dtotojson.ProjectJsonResource;
 import main.java.server.responce.ResponseBuilder;
-import main.java.server.util.AddResponceHeaders;
 import main.java.server.util.GenericExporter;
 import org.json.JSONObject;
-import org.restlet.engine.header.Header;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.*;
-import org.restlet.util.Series;
 import org.w3c.dom.Document;
 
 import java.util.List;
-
-import static main.java.server.responce.ResourceExceptionHandling.*;
 
 /**
  * Created by oking on 02/10/14.

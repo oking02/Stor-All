@@ -1,6 +1,6 @@
 package main.java.server.resources.system.forms;
 
-import main.java.server.util.AddResponceHeaders;
+import main.java.server.responce.AddResponceHeaders;
 import org.restlet.data.MediaType;
 import org.restlet.engine.header.Header;
 import org.restlet.representation.FileRepresentation;

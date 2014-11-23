@@ -1,13 +1,11 @@
 package main.java.server.resources;
 
 import main.java.dto.Experiment;
-import main.java.server.util.AddResponceHeaders;
+import main.java.server.responce.AddResponceHeaders;
 import org.json.JSONObject;
 import org.restlet.data.Form;
 import org.restlet.engine.header.Header;
 import org.restlet.ext.json.JsonRepresentation;
-import org.restlet.ext.json.JsonpRepresentation;
-import org.restlet.representation.ObjectRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Get;

@@ -4,7 +4,7 @@ import main.java.dto.TransferObject;
 import main.java.mysql.presenter.ExperimentPresenter;
 import main.java.mysql.presenter.ProjectPresenter;
 import main.java.mysql.presenter.ReadPresenter;
-import main.java.server.util.AddResponceHeaders;
+import main.java.server.responce.AddResponceHeaders;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 import org.restlet.data.MediaType;

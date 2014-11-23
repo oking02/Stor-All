@@ -1,11 +1,8 @@
 package main.java.server.responce;
 
-import main.java.server.util.AddResponceHeaders;
-import main.java.server.util.ExceptionStatusMatcher;
 import org.restlet.Response;
 import org.restlet.data.Status;
 import org.restlet.engine.header.Header;
-import org.restlet.resource.ResourceException;
 import org.restlet.util.Series;
 
 /**

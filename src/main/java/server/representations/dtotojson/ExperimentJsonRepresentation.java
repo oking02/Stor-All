@@ -1,4 +1,4 @@
-package main.java.server.representations;
+package main.java.server.representations.dtotojson;
 
 import main.java.dto.Analysis;
 import main.java.dto.Experiment;
@@ -8,25 +8,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.restlet.ext.json.JsonRepresentation;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by oking on 22/11/14.
  */
-public class ExperimentJsonRepresentation {
-    private List<TransferObject> experimentList;
+public class ExperimentJsonRepresentation extends DtoToRepresentation {
     String[] experimentKeyNames = new String[]{"id", "projectID", "readID", "analysis"};
     String[] analysisKeyNames = new String[]{"id", "expID", "info"};
 
     public ExperimentJsonRepresentation(List<TransferObject> experimentList){
-        this.experimentList = experimentList;
+        super(experimentList);
     }
 
-    public ExperimentJsonRepresentation(Experiment experiment){
-        experimentList = new ArrayList<>();
-        experimentList.add(experiment);
-    }
 
     public JsonRepresentation getJsonRepresentation() throws JSONException {
         return new JsonRepresentation(getJsonArray());
@@ -35,7 +29,7 @@ public class ExperimentJsonRepresentation {
     public JSONArray getJsonArray() throws JSONException {
         JSONArray jsonArray = new JSONArray();
 
-        for (TransferObject transferObject : experimentList) {
+        for (TransferObject transferObject : getDtoList()) {
             JSONObject jsonObject1 = new JSONObject(transferObject, experimentKeyNames);
             Experiment experiment = (Experiment) transferObject;
             jsonObject1.put("analysis", addAnalysis(experiment.analysis));
