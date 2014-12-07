@@ -29,11 +29,25 @@ public class TestScript {
 
     public static void main(String[] args) throws Exception {
 
+        int[] a = new int[]{1,5,2,3,8,7,5,6,8,9,7,5,2,4,6,7,2,3,5,4,7,6};
+        System.out.println(solution(a));
+    }
 
-        AnalysisInExperiment analysisInExperiment = new AnalysisInExperiment();
-        System.out.println(
-                analysisInExperiment.getExperimentAnalysisInfo(8));
+    public static int solution(int[] a){
+        int N = a.length;
 
+        Map<Integer, Integer> differences = new HashMap<>();
+        int total = 0;
+        for (int i = 0; i < N ; i++) {
+            total = total + a[i];
+            differences.put(i, total);
+        }
+
+        List<Integer> list = (List<Integer>) differences.values();
+
+
+
+        return total;
     }
 
 }

@@ -1,6 +1,7 @@
 package main.java.server;
 
 import main.java.server.resources.TestHTMLResource;
+import main.java.server.resources.tools.AnalysisToolsResource;
 import main.java.server.resources.experiment.ExperimentResource;
 import main.java.server.resources.experiment.SingleExperimentResource;
 import main.java.server.resources.project.ProjectExperimentsResource;
@@ -10,12 +11,14 @@ import main.java.server.resources.read.ExperimentsUsingRead;
 import main.java.server.resources.read.ReadResource;
 import main.java.server.resources.read.SingleReadResource;
 import main.java.server.resources.system.FileServerResource;
+import main.java.server.resources.system.forms.AnalysisToolTableAndForm;
 import main.java.server.resources.system.forms.ExperimentFormsResource;
 import main.java.server.resources.system.forms.ProjectFormsResource;
 import main.java.server.resources.system.forms.ReadFormsResource;
 import main.java.server.resources.system.help.HelpResource;
 import main.java.server.resources.system.main.StaticResource;
 import main.java.server.resources.system.info.SystemResource;
+import main.java.server.resources.tools.SingleAnalysisToolResource;
 import org.restlet.Application;
 import org.restlet.Component;
 import org.restlet.Restlet;
@@ -52,6 +55,10 @@ public class StorAllServer extends Application {
 
         Router router = new Router(getContext());
 
+        router.attach("/Tools", AnalysisToolsResource.class);
+        router.attach("/Tools/Tool", SingleAnalysisToolResource.class);
+        router.attach("/Tools/Page", AnalysisToolTableAndForm.class);
+
         router.attach("/Experiment", ExperimentResource.class);
         router.attach("/Experiment/{id}", SingleExperimentResource.class);
 
@@ -65,13 +72,14 @@ public class StorAllServer extends Application {
 
         router.attach("", StaticResource.class);
 
+
         router.attach("/system", SystemResource.class);
 
         router.attach("/help", HelpResource.class);
 
         router.attach("/file", FileServerResource.class);
 
-        router.attach("/static", StaticResource.class);
+
 
         router.attach("/forms/read", ReadFormsResource.class);
         router.attach("/forms/project", ProjectFormsResource.class);

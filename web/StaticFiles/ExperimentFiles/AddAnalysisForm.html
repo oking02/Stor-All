@@ -1,28 +1,40 @@
 <form id="AddAnalysis" >
 
+
 		      	<div class="form-group" class="col-xs-4">
 		          <label for="expIDa">Experiment ID:</label>
 		          <input type="text" class="form-control" id="expIDa" placeholder="Enter ID">
 		        </div>
 
 		        <div class="form-group" class="col-xs-4">
-		          <label for="info">Parameter Info</label>
+		          <label for="info">Parameter Info:</label>
 		          <input type="text" class="form-control" id="info" placeholder="Enter Info">
 		        </div>
 
-		        <div class="form-group" class="col-xs-4">
-		          <label for="aloc">Location</label>
+				 <div class="form-group" class="col-xs-4">
+  					<label for="toolSelect">Select Analysis Tool:</label>
+  					<select class="form-control" class="col-xs-4" id="toolSelect">
+					    <option disabled selected></option>
+					  </select>
+				</div>
+
+				<div id="locationTextBox" class="form-group" class="col-xs-4">
+		          <label for="aloc">Location To Use:</label>
 		          <input type="text" class="form-control" id="aloc" placeholder="Enter Location Path">
 		        </div>
-		        <button type="button" class="btn btn-primary" id="addAnaSubBtm" onclick="addAnalysis()">Submit</button>
 
-		        <div class="alert alert-success alert-dismissible" role="alert" id="expAnaSuccess">
- 				 <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-  				Analysis Added
-			</div>
+        		<div id="knownLocationTextBox" class="form-group" class="col-xs-4">
+		          	<label for="toolLocation">Chosen Tool's Location:</label>
+		          	<div class="panel panel-default">
+  						<div class="panel-body">
+    						<p id="toolLocation" class="form-control-static"></p>
+  						</div>
+					</div>     				
+		        </div>
 
-			<div class="alert alert-danger alert-dismissible" role="alert" id="expAnaFail">
- 				 <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-  				Server Error: 
-			</div>
-		</form>
+
+      			<div>
+  					<button  type="button" class="btn btn-primary" id="addAnaSubBtm" onclick="addAnalysis()">Submit</button>
+  				</div>
+  		        		        
+</form>

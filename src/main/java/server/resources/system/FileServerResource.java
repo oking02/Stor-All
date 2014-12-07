@@ -4,6 +4,7 @@ import jdk.internal.util.xml.impl.XMLWriter;
 import main.java.dto.TransferObject;
 import main.java.fileutils.ExportToCSV;
 import main.java.mysql.presenter.ExperimentPresenter;
+import main.java.server.responce.ResponseBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,6 +29,8 @@ public class FileServerResource extends ServerResource {
 
     @Get("?CSV")
     public Representation getCSV() throws Exception {
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
+
 
         /*
         JSONObject jsonObject = representation.getJsonObject();
@@ -43,12 +46,13 @@ public class FileServerResource extends ServerResource {
         File toExport = new File(new File("").getAbsolutePath() + "/" + "Experiment" + "s.csv");
         FileRepresentation fileRepresentation = new FileRepresentation(new File("").getAbsolutePath() + "/" + "Experiment" + "s.csv", MediaType.TEXT_CSV);
 
-
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
         return fileRepresentation;
     }
 
     @Get("?JSON")
     public Representation getJSON() throws Exception {
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
         JSONArray jsonArray = new JSONArray();
 
@@ -69,6 +73,7 @@ public class FileServerResource extends ServerResource {
         fileWriter.close();
 
         FileRepresentation fileRepresentation = new FileRepresentation(jsonFile, MediaType.APPLICATION_ALL_JSON);
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
         return fileRepresentation;
     }
 

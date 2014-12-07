@@ -1988,6 +1988,12 @@
       <foreign-key name="Analysis_ibfk_1" columns="ExpID" ref-table="Experiments" ref-schema="" ref-catalog="storall" ref-columns="ID" update-rule="3" delete-rule="3" deferrability="2"/>
       <index name="unique_ID" unique="true" columns="ID"/>
     </table>
+    <table name="AnalysisInfo" schema="" catalog="storall" type="TABLE">
+      <column name="Name" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="OutputLocation" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="UseCount" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <primary-key name="PRIMARY" columns="Name"/>
+    </table>
     <table name="Experiments" schema="" catalog="storall" type="TABLE">
       <column name="ID" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
       <column name="ProjectID" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>

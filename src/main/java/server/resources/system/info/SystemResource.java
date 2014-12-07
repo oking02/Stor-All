@@ -5,6 +5,7 @@ import main.java.mysql.presenter.ExperimentPresenter;
 import main.java.mysql.presenter.ProjectPresenter;
 import main.java.mysql.presenter.ReadPresenter;
 import main.java.server.responce.AddResponceHeaders;
+import main.java.server.responce.ResponseBuilder;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 import org.restlet.data.MediaType;
@@ -32,8 +33,8 @@ public class SystemResource extends ServerResource {
 
     @Get("?page")
     public Representation getSystemInfoPage(){
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
         FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/InfoFiles/SystemInfo.html"), MediaType.TEXT_HTML);
         return fileRepresentation;
@@ -42,8 +43,8 @@ public class SystemResource extends ServerResource {
     @Get("?size")
     public JsonRepresentation getSizeInformation(){
 
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
         Map<String, Long> sizeInfo = buildSizeInfoJson();
 
@@ -56,8 +57,8 @@ public class SystemResource extends ServerResource {
     @Get("?count")
     public Representation getCountInformation() {
 
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
         JsonRepresentation jsonRepresentation = null;
         try {
@@ -75,8 +76,8 @@ public class SystemResource extends ServerResource {
 
     @Get("?allinfo")
     public Representation getSystemInfo() {
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
         JsonRepresentation jsonRepresentation = null;
         try {

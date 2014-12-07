@@ -16,7 +16,7 @@ public class AddResponceHeaders {
             response.getAttributes().put("org.restlet.http.headers", responseHeaders);
         }
         responseHeaders.add(new Header("Access-Control-Allow-Origin", "*"));
-        responseHeaders.add(new Header("Access-Control-Allow-Methods", "POST,OPTIONS"));
+        responseHeaders.add(new Header("Access-Control-Allow-Methods", "POST,OPTIONS,DELETE"));
         responseHeaders.add(new Header("Access-Control-Allow-Headers", "Content-Type"));
         responseHeaders.add(new Header("Access-Control-Allow-Credentials", "false"));
         responseHeaders.add(new Header("Access-Control-Max-Age", "60"));

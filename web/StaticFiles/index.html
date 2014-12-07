@@ -6,8 +6,8 @@
   	<meta name="viewport" content="width=device-width, initial-scale=1">
  	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-  	<script src="scripts.js"></script>
+  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.js"></script>
+  	
   	<script id="javaScript" src=""></script>
 
   	<script>
@@ -18,7 +18,7 @@
 
   		});
 
-  		$.get("http://localhost:27777/storall/static?home", function(data, status){
+  		$.get("http://localhost:27777/storall?home", function(data, status){
 				$( "#main" ).empty();
 	    		$( "#main" ).html(data);
 	  			});
@@ -26,6 +26,12 @@
   	</script>
 
 </head>
+
+<style>
+      #main {
+        padding-top: 20px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
 
 <body >
 
@@ -49,7 +55,9 @@
 			        <li id="expAddBtm" type="button"><a href="#">Add New</a></li>
 			        <li id="expAddAnaBtm"><a href="#">Add Analysis</a></li>
 			        <li id="expAddNotesBtm"><a href="#">Add Notes</a></li>
-			        <li id="expFind"><a href="#">Find</a></li> 
+			        <li id="expFind"><a href="#">Find</a></li>
+			        <li id="expDelete"><a href="#">Delete</a></li> 
+			        <li id="analysisTool"><a href="#">Analysis Tools</a></li> 
 		      </ul>
 	    </li>
 
@@ -60,7 +68,8 @@
 				<ul class="dropdown-menu">
 			        <li id="proAddBtm"><a href="#">Add New</a></li>
 			        <li id="proAddNotesBtm"><a href="#">Add Notes</a></li>
-			        <li id="proFind"><a href="#">Find</a></li> 
+			        <li id="proFind"><a href="#">Find</a></li>
+			        <li id="proDelete"><a href="#">Delete</a></li> 
 		      </ul>
 	    </li>
 
@@ -71,7 +80,8 @@
 				<ul class="dropdown-menu">
 			        <li id="readAddBtm"><a href="#">Add New</a></li>
 			        <li id="readAddNotesBtm"><a href="#">Add Notes</a></li>
-			        <li id="readFind"><a href="#">Find</a></li> 
+			        <li id="readFind"><a href="#">Find</a></li>
+			        <li id="readDelete"><a href="#">Delete</a></li> 
 		      </ul>
 	    </li>
 
@@ -97,8 +107,6 @@
 <div class="container serverDetails" onload="checkServerDetails()">
 	<div class="row" >
 
-
-
 		<div class="modal fade" id="serverDetailsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     		<div class="modal-dialog">
         		<div class="modal-content">
@@ -117,8 +125,6 @@
                 	Please enter the IP and port number of the Server.
                 	For example, <code>http://localhost:27777/</code>storall/.
                 	Enter your version of the hightlighted part!
-                	
-
                 	</p>
 
                     <div class="form-group">
@@ -135,18 +141,96 @@
                     </div>
 
                     <p>It will be stored inside the browser using HTML5 local storage. Cleaning the cache may delete it. This will be detected and you will need to enter it again.</p>
-
                 </form>
-
             </div>
-
-
         </div>
     </div>
 </div>
-
 	</div>
 </div>
+
+<div class="container ">
+	<div class="row" >
+
+		<div class="modal fade" id="toolmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    	<div class="modal-dialog">
+        	<div class="modal-content">
+        		<div class="modal-header">
+               	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>               		
+                	<h4 class="modal-title">Add New Analysis Tool</h4>
+            	</div>
+
+            <div class="modal-body">
+                <form id="toolForm" class="form-horizontal">
+                	<p>
+                	Please enter the Name and Output Directory Path of the Tool.
+                	For example,<code>ATool</code>,  <code>/home/oking/Documents/Tools/AToolLocation</code>.</p>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Name</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="toolNameInput" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Directory Path</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="toolOutputPathInput" />
+                        </div>
+                    </div>
+                 
+                    <div class="form-group">
+                        <div class="col-sm-5 col-sm-offset-3">
+                            <button type="submit" class="btn btn-default" id="newAnalysisToolSubBtm" onclick="addAnalysisTool()">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+	</div>
+</div>
+
+<div class="container ">
+  <div class="row" >
+
+    <div class="modal fade" id="updatetoolmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" value="">
+      <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>                  
+                  <h4 class="modal-title">Update Analysis Tool</h4>
+              </div>
+
+            <div class="modal-body">
+                <form id="toolForm" class="form-horizontal">
+                  <p>
+                  Please enter the new Output Directory Path of the Tool.
+                  For example, <code>/home/oking/Documents/Tools/AToolLocation</code>.</p>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Directory Path</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="toolOutputPathUpdateInput" />
+                        </div>
+                    </div>
+                 
+                    <div class="form-group">
+                        <div class="col-sm-5 col-sm-offset-3">
+                            <button type="submit" class="btn btn-default" id="newAnalysisToolSubBtm" onclick="updateAnalysisTool()">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+  </div>
+</div>
+
+
 
 <div class="container ">
 	<div class="row" >
@@ -159,6 +243,8 @@
 
 	</div>
 </div>
+
+
 
 
 

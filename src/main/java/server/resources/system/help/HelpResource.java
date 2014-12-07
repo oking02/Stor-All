@@ -1,6 +1,7 @@
 package main.java.server.resources.system.help;
 
 import main.java.server.responce.AddResponceHeaders;
+import main.java.server.responce.ResponseBuilder;
 import org.restlet.data.MediaType;
 import org.restlet.engine.header.Header;
 import org.restlet.representation.FileRepresentation;
@@ -18,8 +19,8 @@ public class HelpResource extends ServerResource {
 
     @Get("?howto")
     public Representation getHowToPage(){
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
         FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/HelpFiles/HowTo.html"), MediaType.TEXT_HTML);
         return fileRepresentation;
@@ -27,8 +28,8 @@ public class HelpResource extends ServerResource {
 
     @Get("?colltype")
     public Representation getCollTypePage(){
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
         FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/HelpFiles/CollectionTypes.html"), MediaType.TEXT_HTML);
         return fileRepresentation;

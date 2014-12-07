@@ -8,6 +8,7 @@ import main.java.dtoadapters.dtofinders.ExperimentFinder;
 import main.java.dtoadapters.dtoupdate.DtoUpdater;
 import main.java.dtoadapters.dtoupdate.ExperimentUpdate;
 import main.java.fileutils.NoteController;
+import main.java.mysql.analysistools.UpdateAnalysisTool;
 import main.java.mysql.builder.AnalysisBuilder;
 import main.java.mysql.presenter.ExperimentPresenter;
 import main.java.mysql.utils.DtoToXml;
@@ -120,6 +121,10 @@ public class SingleExperimentResource extends ServerResource {
             String info = jsonObject.getString("info");
             String dataLocation = jsonObject.getString("dataLocation");
             int id = IDGenerator.getUniqueID("Analysis");
+
+            AnalysisTool analysisTool = new AnalysisTool("toolname", dataLocation);
+            UpdateAnalysisTool updateAnalysisTool = new UpdateAnalysisTool(analysisTool);
+            updateAnalysisTool.updateCount();
 
             Analysis analysis = new Analysis(id, Integer.parseInt(expID), info, dataLocation);
             experimentUpdate.update(analysis);

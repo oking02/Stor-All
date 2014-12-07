@@ -29,7 +29,7 @@ public class ResponseBuilder {
 
     public void addSuccessStatus(String method){
         SuccessStatusMatcher successStatusMatcher = new SuccessStatusMatcher();
-        successStatusMatcher.addCorrectStatus(method);
+        response.setStatus(successStatusMatcher.addCorrectStatus(method));
     }
 
 

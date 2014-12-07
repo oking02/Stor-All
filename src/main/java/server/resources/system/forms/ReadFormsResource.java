@@ -1,6 +1,7 @@
 package main.java.server.resources.system.forms;
 
 import main.java.server.responce.AddResponceHeaders;
+import main.java.server.responce.ResponseBuilder;
 import org.restlet.data.MediaType;
 import org.restlet.engine.header.Header;
 import org.restlet.representation.FileRepresentation;
@@ -18,8 +19,8 @@ public class ReadFormsResource extends ServerResource {
 
     @Get("?addread")
     public Representation getAddReadForm(){
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
         FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/ReadFiles/AddReadForm.html"), MediaType.TEXT_HTML);
         return fileRepresentation;
@@ -27,8 +28,8 @@ public class ReadFormsResource extends ServerResource {
 
     @Get("?addreadnotes")
     public Representation getAddReadNotesForm(){
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
         FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/ReadFiles/AddReadNotesForm.html"), MediaType.TEXT_HTML);
         return fileRepresentation;
@@ -36,8 +37,8 @@ public class ReadFormsResource extends ServerResource {
 
     @Get("?findread")
     public Representation findReadForm(){
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
         FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/ReadFiles/FindReadForm.html"), MediaType.TEXT_HTML);
         return fileRepresentation;
