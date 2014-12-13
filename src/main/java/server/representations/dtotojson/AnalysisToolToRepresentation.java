@@ -32,7 +32,6 @@ public class AnalysisToolToRepresentation extends DtoToRepresentation {
         for (TransferObject transferObject : getDtoList()) {
             JSONObject jsonObject1 = new JSONObject(transferObject, analysisToolKeys);
             jsonArray.put(jsonObject1);
-            System.out.println(jsonObject1);
         }
         return jsonArray;
     }

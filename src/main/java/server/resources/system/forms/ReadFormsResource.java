@@ -43,4 +43,13 @@ public class ReadFormsResource extends ServerResource {
         FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/ReadFiles/FindReadForm.html"), MediaType.TEXT_HTML);
         return fileRepresentation;
     }
+
+    @Get("?deleteread")
+    public Representation deleteReadForm(){
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
+        FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/ReadFiles/DeleteReadForm.html"), MediaType.TEXT_HTML);
+        return fileRepresentation;
+    }
 }

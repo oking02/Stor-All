@@ -53,4 +53,13 @@ public class ExperimentFormsResource extends ServerResource {
         return fileRepresentation;
     }
 
+    @Get("?deleteexperiment")
+    public Representation deleteExperimentForm(){
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
+        FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/ExperimentFiles/DeleteExperimentForm.html"), MediaType.TEXT_HTML);
+        return fileRepresentation;
+    }
+
 }

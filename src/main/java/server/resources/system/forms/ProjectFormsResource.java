@@ -43,4 +43,13 @@ public class ProjectFormsResource extends ServerResource{
         FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/ProjectFiles/FindProjectForm.html"), MediaType.TEXT_HTML);
         return fileRepresentation;
     }
+
+    @Get("?deleteproject")
+    public Representation deleteProjectForm(){
+        ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
+        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
+        FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/ProjectFiles/DeleteProjectForm.html"), MediaType.TEXT_HTML);
+        return fileRepresentation;
+    }
 }

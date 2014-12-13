@@ -7,6 +7,8 @@ import main.java.dtoadapters.dtofinders.DtoFinder;
 import main.java.dtoadapters.dtofinders.ExperimentFinder;
 import main.java.fileutils.ExportToCSV;
 import main.java.mysql.builder.ExperimentBuilder;
+import main.java.mysql.counters.ProjectCounter;
+import main.java.mysql.counters.ReadCounter;
 import main.java.mysql.presenter.ExperimentPresenter;
 import main.java.mysql.utils.DtoToXml;
 
@@ -117,6 +119,13 @@ public class ExperimentResource extends ServerResource {
             experiment.id = IDGenerator.getUniqueID("Experiment");
             ExperimentBuilder experimentBuilder = new ExperimentBuilder(experiment);
             experimentBuilder.build();
+
+            ProjectCounter projectCounter = new ProjectCounter();
+            projectCounter.incrementProjectCount(experiment.projectID);
+
+            ReadCounter readCounter = new ReadCounter();
+            readCounter.incrementProjectCount(experiment.readID);
+
             responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
         } catch (Exception e){

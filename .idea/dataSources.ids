@@ -2013,12 +2013,14 @@
     <table name="Projects" schema="" catalog="storall" type="TABLE">
       <column name="ID" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
       <column name="Owner" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="Count" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
       <primary-key name="PRIMARY" columns="ID"/>
       <exported-key name="Experiments_ibfk_1" table="Experiments" schema="" catalog="storall" columns="ProjectID"/>
       <index name="unique_ID" unique="true" columns="ID"/>
     </table>
     <table name="RawReads" schema="" catalog="storall" type="TABLE">
       <column name="ID" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="Count" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
       <primary-key name="PRIMARY" columns="ID"/>
       <exported-key name="Experiments_ibfk_2" table="Experiments" schema="" catalog="storall" columns="ReadID"/>
       <index name="unique_ID" unique="true" columns="ID"/>

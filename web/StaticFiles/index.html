@@ -12,13 +12,13 @@
 
   	<script>
 
-  		$.get("http://localhost:27777/storall?js", function(data, status){
+  		$.get("http://192.168.0.15:27777/storall?js", function(data, status){
 
     		$("#javaScript").attr("src", data);
 
   		});
 
-  		$.get("http://localhost:27777/storall?home", function(data, status){
+  		$.get("http://192.168.0.15:27777/storall?home", function(data, status){
 				$( "#main" ).empty();
 	    		$( "#main" ).html(data);
 	  			});

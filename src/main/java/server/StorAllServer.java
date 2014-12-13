@@ -1,6 +1,8 @@
 package main.java.server;
 
 import main.java.server.resources.TestHTMLResource;
+import main.java.server.resources.system.info.counter.ProjectCounterResource;
+import main.java.server.resources.system.info.counter.ReadCounterResource;
 import main.java.server.resources.tools.AnalysisToolsResource;
 import main.java.server.resources.experiment.ExperimentResource;
 import main.java.server.resources.experiment.SingleExperimentResource;
@@ -65,10 +67,12 @@ public class StorAllServer extends Application {
         router.attach("/Project", ProjectResource.class);
         router.attach("/Project/{id}", SingleProjectResource.class);
         router.attach("/Project/{id}/Experiments", ProjectExperimentsResource.class);
+        router.attach("/Project/{id}/Count", ProjectCounterResource.class);
 
         router.attach("/Read", ReadResource.class);
         router.attach("/Read/{id}", SingleReadResource.class);
         router.attach("/Read/{id}/Experiments", ExperimentsUsingRead.class);
+        router.attach("/Read/{id}/Count", ReadCounterResource.class);
 
         router.attach("", StaticResource.class);
 

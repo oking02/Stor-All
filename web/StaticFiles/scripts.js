@@ -78,6 +78,13 @@ $(document).ready(function(){
   			});
 		})
 
+	$("#expDelete").click(function(){
+			$.get(details + "storall/forms/experiment?deleteexperiment", function(data, status){
+			$( "#main" ).empty();
+    		$( "#main" ).html(data);
+  			});
+		})
+
 	/*-----Analysis Tool Section-----*/ 
 
 	$("#analysisTool").click(function(){
@@ -116,6 +123,13 @@ $(document).ready(function(){
   			});
 		})
 
+	$("#proDelete").click(function(){
+		$.get(details + "storall/forms/project?deleteproject", function(data, status){
+			$( "#main" ).empty();
+    		$( "#main" ).html(data);
+  			});
+		})
+
 
 /*-------------------------------------- Read Section ----------------------------------------------*/
 	
@@ -144,6 +158,13 @@ $(document).ready(function(){
     		$( "#main" ).html(data);
   		});
 	})
+
+	$("#readDelete").click(function(){
+		$.get(details + "storall/forms/read?deleteread", function(data, status){
+			$( "#main" ).empty();
+    		$( "#main" ).html(data);
+  			});
+		})
 
 
 	/*-------------------------------------- System Section ----------------------------------------------*/
@@ -282,26 +303,59 @@ $(document).ready(function(){
 	}
 
 	function findExperiment(){
+		$("tbody").empty();
 		var expID = $("input[id=expIDf]").val();
 
 		$.get(details + "storall/Experiment/" + expID + "?json", function(data, status){
 
-    		//alert(JSON.stringify(data, undefined, '\t')); 	
-    		$("#experimentRepresentationArea").empty();	
-    		$("#experimentRepresentationArea").append(JSON.stringify(data, undefined, '\t'));
-    	
+			var jsonObj = eval ("(" + JSON.stringify(data, undefined, '\t') + ")");	
+    		addExpToTable(jsonObj[0].id, jsonObj[0].projectID ,jsonObj[0].readID, jsonObj[0].analysis);
+    		   	
   		});
 	}
 
 	function findAllExperiment(){
+		$("tbody").empty();
 
 		$.get(details + "storall/Experiment?json", function(data, status){
-
-    		//alert(JSON.stringify(data, undefined, '\t')); 	
-    		$("#experimentRepresentationArea").empty();	
-    		$("#experimentRepresentationArea").append(JSON.stringify(data, undefined, '\t'));
+ 
+    		var jsonObj = eval ("(" + JSON.stringify(data, undefined, '\t') + ")");	
+ 
+    		for (var i = jsonObj.length - 1; i >= 0; i--) {
+    			addExpToTable(jsonObj[i].id, jsonObj[i].projectID ,jsonObj[i].readID, jsonObj[i].analysis);
+    		}; 	
     	
   		});
+	}
+
+	function addExpToTable(expid, pid, rid, analysis){
+		var idrow = '<tr>\n<td>' + expid + '</td>\n';
+		var pidrow = '<td>' + pid + '</td>\n';
+		var ridrow = '<td>' + rid + '</td>\n';
+		var analysisrow = addAnalysisToExpTable(expid, analysis);
+		var end = '</tr>\n';
+		$("#experimentTable").prepend(idrow + pidrow + ridrow + analysisrow + end);
+	}
+
+	function addAnalysisToExpTable(expid, analysis){
+		var toggleid = '"collapse' + expid + '"';
+		var row1 = '<td><div><p data-toggle="collapse" href="#collapse' + expid + '"  aria-controls=' + toggleid + '>Click for analysis</p>\n';
+		var row2 = '<div id=' + toggleid + ' class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">\n';
+		var listrow = '<ul class="list-group">\n';
+		for (var i = 0; i < analysis.length; i++) {
+			listrow += '<li class="list-group-item"> id: ' + analysis[i].id + ' expId: ' + analysis[i].expID + ' info: ' + analysis[i].info + '</li>\n';
+		};
+		var row3 = '</ul></div></div></td>\n';
+		return row1 + row2 + listrow + row3;
+	}
+
+	function deleteExperiment(){
+		var expid = $("input[id=expIDd]").val();
+
+		$.ajax({
+    		url: details + "storall/Experiment/" + expid,
+    		type: 'DELETE'  
+		});
 	}
 
 	function buildToolTable(){
@@ -404,22 +458,25 @@ $(document).ready(function(){
 	}
 
 	function findProject(){
+		$("tbody").empty();
 		var pID = $("input[id=pIDf]").val();
 
 		$.get(details + "storall/Project/" + pID + "?json", function(data, status){
-
-    		//alert(JSON.stringify(data, undefined, '\t'));
-    		$("#projectRepresentationArea").empty();
-    		$("#projectRepresentationArea").append(JSON.stringify(data, undefined, '\t'));
+			var jsonObj = eval ("(" + JSON.stringify(data, undefined, '\t') + ")");	
+    		addProToTable(jsonObj[0].id, jsonObj[0].owner);
   		});
 	}
 
 	function findAllProject(){
+		$("tbody").empty();
 
 		$.get(details + "storall/Project?json", function(data, status){
+			var jsonObj = eval ("(" + JSON.stringify(data, undefined, '\t') + ")");	
 
-    		$("#projectRepresentationArea").empty();
-    		$("#projectRepresentationArea").append(JSON.stringify(data, undefined, '\t'));
+			for (var i = 0; i < jsonObj.length; i++) {
+				addProToTable(jsonObj[i].id, jsonObj[i].owner);
+			};
+
   		});
 	}
 
@@ -428,9 +485,44 @@ $(document).ready(function(){
 
 		$.get(details + "storall/Project/" + pID + "/Experiments?json", function(data, status){
 
+
     		$("#projectRepresentationArea").empty();
     		$("#projectRepresentationArea").append(JSON.stringify(data, undefined, '\t'));
   		});
+	}
+
+	function addProToTable(id, owner){
+
+		var idrow = '<tr>\n<td>' + id + '</td>\n';
+		var ownerrow = '<td>' + owner + '</td>\n';
+		var countrow = '<td>' + getProjectCount(id) + '</td>\n';
+		var end = '</tr>\n';
+		$("#projectTable").append(idrow + ownerrow + countrow + end);
+	}
+
+	function counter(count){
+		this.count = count;
+	}
+
+	function getProjectCount(id){
+		
+		
+		$.get(details + "storall/Project/" + id + "/Count?json", function(data, status){
+			//ar jsonObj = JSON.parse(JSON.stringify(data, undefined, '\t'));
+			var jsonObj = eval ("(" + JSON.stringify(data, undefined, '\t') + ")");
+			var counter = new counter(jsonObj[0].count);
+			alert(counter);
+    		return counter.count;
+  		});
+	}
+
+	function deleteProject(){
+		var proid = $("input[id=proIDd]").val();
+
+		$.ajax({
+    		url: details + "storall/Project/" + proid,
+    		type: 'DELETE'  
+		});
 	}
 
 /*-------------------------------------- Read Section ----------------------------------------------*/
@@ -469,24 +561,41 @@ $(document).ready(function(){
 	}
 
 	function findRead(){
+		$("tbody").empty();
 		var rID = $("input[id=rIDf]").val();
 
 		$.get(details + "storall/Read/" + rID + "?json", function(data, status){
-
-    		//alert(JSON.stringify(data, undefined, '\t'));
-    		$("#readRepresentationArea").empty();
-    		$("#readRepresentationArea").append(JSON.stringify(data, undefined, '\t'));
+			var jsonObj = eval ("(" + JSON.stringify(data, undefined, '\t') + ")");	
+    		addreadToTable(jsonObj[0].id);
   		});
 	}
 
 	function findAllRead(){
+		$("tbody").empty();
 
 		$.get(details + "storall/Read?json", function(data, status){
+			var jsonObj = eval ("(" + JSON.stringify(data, undefined, '\t') + ")");	
 
-    		//alert(JSON.stringify(data, undefined, '\t'));
-    		$("#readRepresentationArea").empty();
-    		$("#readRepresentationArea").append(JSON.stringify(data, undefined, '\t'));
+			for (var i = 0; i < jsonObj.length; i++) {
+				addreadToTable(jsonObj[i].id);
+			};
   		});
+	}
+
+	function addreadToTable(id){
+		var idrow = '<tr>\n<td>' + id + '</td>\n';
+		var end = '</tr>\n';
+		$("#readTable").append(idrow + end);
+	}
+
+
+	function deleteRead(){
+		var readid = $("input[id=readIDd]").val();
+
+		$.ajax({
+    		url: details + "storall/Read/" + readid,
+    		type: 'DELETE'  
+		});
 	}
 	
 
