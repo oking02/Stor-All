@@ -11,6 +11,7 @@ import org.restlet.resource.ServerResource;
 import org.restlet.util.Series;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by oking on 13/11/14.
@@ -18,7 +19,7 @@ import java.io.File;
 public class HelpResource extends ServerResource {
 
     @Get("?howto")
-    public Representation getHowToPage(){
+    public Representation getHowToPage() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
@@ -27,7 +28,7 @@ public class HelpResource extends ServerResource {
     }
 
     @Get("?colltype")
-    public Representation getCollTypePage(){
+    public Representation getCollTypePage() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 

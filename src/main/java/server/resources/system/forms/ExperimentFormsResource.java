@@ -11,6 +11,7 @@ import org.restlet.resource.ServerResource;
 import org.restlet.util.Series;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by oking on 13/11/14.
@@ -18,7 +19,7 @@ import java.io.File;
 public class ExperimentFormsResource extends ServerResource {
 
     @Get("?addexperiment")
-    public Representation getAddExperimentForm(){
+    public Representation getAddExperimentForm() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
@@ -27,7 +28,7 @@ public class ExperimentFormsResource extends ServerResource {
     }
 
     @Get("?addanalysis")
-    public Representation getAddAnalysisForm(){
+    public Representation getAddAnalysisForm() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
@@ -36,7 +37,7 @@ public class ExperimentFormsResource extends ServerResource {
     }
 
     @Get("?addexperimentnotes")
-    public Representation getAddExperimentNotesForm(){
+    public Representation getAddExperimentNotesForm() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
@@ -45,7 +46,7 @@ public class ExperimentFormsResource extends ServerResource {
     }
 
     @Get("?findexperiment")
-    public Representation findExperimentForm(){
+    public Representation findExperimentForm() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
@@ -54,7 +55,7 @@ public class ExperimentFormsResource extends ServerResource {
     }
 
     @Get("?deleteexperiment")
-    public Representation deleteExperimentForm(){
+    public Representation deleteExperimentForm() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 

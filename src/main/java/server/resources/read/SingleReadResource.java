@@ -15,6 +15,7 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.*;
 import org.w3c.dom.Document;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ import java.util.List;
 public class SingleReadResource extends ServerResource {
 
     @Get("?xml")
-    public Representation getRead() {
+    public Representation getRead() throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         int queryID = Integer.parseInt(this.getAttribute("id"));
@@ -40,17 +41,18 @@ public class SingleReadResource extends ServerResource {
             domRepresentation = new DomRepresentation();
             domRepresentation.setDocument(document);
 
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
         } catch (Exception e) {
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
 
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
         return domRepresentation;
 
     }
 
     @Get("?json")
-    public Representation getReadJson() {
+    public Representation getReadJson() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
         ReadJsonRepresentation readJsonRepresentation = null;
@@ -62,16 +64,17 @@ public class SingleReadResource extends ServerResource {
 
             readJsonRepresentation = new ReadJsonRepresentation(listOfRead);
 
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
         } catch (Exception e) {
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
 
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
         return readJsonRepresentation.getJsonRepresentation();
     }
 
     @Post("?note")
-    public void addNotes(JsonRepresentation representation) {
+    public void addNotes(JsonRepresentation representation) throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
@@ -83,15 +86,15 @@ public class SingleReadResource extends ServerResource {
 
             NoteController noteController = new NoteController(queryExpID, "Read");
             noteController.addNotes(note);
+
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
         } catch (Exception e) {
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
-
     }
 
     @Put
-    public void exportRead(Representation representation){
+    public void exportRead(Representation representation) throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         try {
@@ -106,7 +109,7 @@ public class SingleReadResource extends ServerResource {
     }
 
     @Delete
-    public void deleteRead(){
+    public void deleteRead() throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         int queryID = Integer.parseInt(this.getAttribute("id"));

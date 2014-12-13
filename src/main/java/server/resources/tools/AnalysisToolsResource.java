@@ -15,6 +15,7 @@ import org.restlet.resource.Post;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class AnalysisToolsResource extends ServerResource {
 
 
     @Get("?json")
-    public JsonRepresentation getToolsJson(){
+    public JsonRepresentation getToolsJson() throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         GetAnalysisTools getAnalysisTools;
@@ -46,7 +47,7 @@ public class AnalysisToolsResource extends ServerResource {
     }
 
     @Post("?json")
-    public void addAnalysisToolJson(JsonRepresentation representation){
+    public void addAnalysisToolJson(JsonRepresentation representation) throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
         try {

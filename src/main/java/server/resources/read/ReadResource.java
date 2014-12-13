@@ -18,6 +18,7 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.*;
 import org.w3c.dom.Document;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ import java.util.List;
 public class ReadResource extends ServerResource {
 
     @Get("?xml")
-    public Representation getReads() {
+    public Representation getReads() throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         List<TransferObject> listOfReads = null;
@@ -42,16 +43,18 @@ public class ReadResource extends ServerResource {
             domRepresentation = new DomRepresentation();
             domRepresentation.setDocument(document);
 
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
         } catch (Exception e) {
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
 
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
         return domRepresentation;
     }
 
     @Get("?json")
-    public Representation getReadJson() {
+    public Representation getReadJson() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
         ReadJsonRepresentation readJsonRepresentation = null;
@@ -61,15 +64,17 @@ public class ReadResource extends ServerResource {
             List<TransferObject> listOfProjects = readPresenter.createListOfAllReads();
             readJsonRepresentation = new ReadJsonRepresentation(listOfProjects);
 
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
         } catch (Exception e) {
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
         return readJsonRepresentation.getJsonRepresentation();
     }
 
     @Post("?xml")
-    public String addRead(Representation representation) {
+    public String addRead(Representation representation) throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         DomRepresentation domRepresentation = new DomRepresentation(representation);
@@ -90,15 +95,17 @@ public class ReadResource extends ServerResource {
                 newReads = newReads + "Read: " + read.id;
             }
 
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
         } catch (Exception e){
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
         return newReads;
     }
 
     @Post("?json")
-    public void addReadJson(JsonRepresentation representation) {
+    public void addReadJson(JsonRepresentation representation) throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
@@ -122,7 +129,7 @@ public class ReadResource extends ServerResource {
 
 
     @Post("?file")
-    public void exportToFile(Representation representation) {
+    public void exportToFile(Representation representation) throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         DomRepresentation domRepresentation = new DomRepresentation(representation);

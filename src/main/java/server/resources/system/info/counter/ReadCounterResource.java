@@ -9,13 +9,15 @@ import org.restlet.resource.Get;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
 
+import java.io.IOException;
+
 /**
  * Created by oking on 09/12/14.
  */
 public class ReadCounterResource extends ServerResource{
 
     @Get("?json")
-    public JsonRepresentation getReadCounter(){
+    public JsonRepresentation getReadCounter() throws IOException {
         int queryID = Integer.parseInt(this.getAttribute("id"));
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 

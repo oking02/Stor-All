@@ -29,8 +29,18 @@ public class TestScript {
 
     public static void main(String[] args) throws Exception {
 
-        int[] a = new int[]{1,5,2,3,8,7,5,6,8,9,7,5,2,4,6,7,2,3,5,4,7,6};
-        System.out.println(solution(a));
+        int i = 9;
+        double result = Math.sqrt(i);
+        double test = result % 1;
+        System.out.println(result);
+        System.out.println(test);
+        Map<Integer, Integer> d = new HashMap<>();
+        d.put(2, 5);
+        double x = i;
+        System.out.println(x);
+        System.out.println(Math.sqrt(-8));
+        System.out.println(new File(new File("").getAbsolutePath()).toString());
+
     }
 
     public static int solution(int[] a){

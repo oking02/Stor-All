@@ -11,6 +11,7 @@ import org.restlet.resource.ServerResource;
 import org.restlet.util.Series;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by oking on 13/11/14.
@@ -18,7 +19,7 @@ import java.io.File;
 public class ReadFormsResource extends ServerResource {
 
     @Get("?addread")
-    public Representation getAddReadForm(){
+    public Representation getAddReadForm() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
@@ -27,7 +28,7 @@ public class ReadFormsResource extends ServerResource {
     }
 
     @Get("?addreadnotes")
-    public Representation getAddReadNotesForm(){
+    public Representation getAddReadNotesForm() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
@@ -36,7 +37,7 @@ public class ReadFormsResource extends ServerResource {
     }
 
     @Get("?findread")
-    public Representation findReadForm(){
+    public Representation findReadForm() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
@@ -45,7 +46,7 @@ public class ReadFormsResource extends ServerResource {
     }
 
     @Get("?deleteread")
-    public Representation deleteReadForm(){
+    public Representation deleteReadForm() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 

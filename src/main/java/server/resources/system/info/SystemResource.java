@@ -14,10 +14,12 @@ import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.representation.FileRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Get;
+import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
 import org.restlet.util.Series;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -32,19 +34,30 @@ public class SystemResource extends ServerResource {
 
 
     @Get("?page")
-    public Representation getSystemInfoPage(){
+    public Representation getSystemInfoPage() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+        try {
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+        } catch (IOException e) {
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
+        }
 
         FileRepresentation fileRepresentation = new FileRepresentation(new File(new File("").getAbsolutePath() + "/web/StaticFiles/InfoFiles/SystemInfo.html"), MediaType.TEXT_HTML);
         return fileRepresentation;
     }
 
     @Get("?size")
-    public JsonRepresentation getSizeInformation(){
+    public JsonRepresentation getSizeInformation() throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+        try {
+
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
+
+        } catch (IOException e) {
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
+        }
 
         Map<String, Long> sizeInfo = buildSizeInfoJson();
 
@@ -55,10 +68,10 @@ public class SystemResource extends ServerResource {
     }
 
     @Get("?count")
-    public Representation getCountInformation() {
+    public Representation getCountInformation() throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
 
         JsonRepresentation jsonRepresentation = null;
         try {
@@ -66,16 +79,17 @@ public class SystemResource extends ServerResource {
             Map<String, Long> countInfo = buildCountInfoJson();
             JSONObject jsonObject = new JSONObject(countInfo);
             jsonRepresentation = new JsonRepresentation(jsonObject);
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
         } catch (Exception e) {
-            exceptionHandling(e, this);
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
 
         return jsonRepresentation;
     }
 
     @Get("?allinfo")
-    public Representation getSystemInfo() {
+    public Representation getSystemInfo() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
@@ -89,7 +103,7 @@ public class SystemResource extends ServerResource {
             jsonRepresentation = new JsonRepresentation(jsonObject);
 
         } catch (Exception e) {
-            exceptionHandling(e, this);
+            throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
 
         return jsonRepresentation;

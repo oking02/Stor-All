@@ -25,6 +25,7 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.*;
 import org.w3c.dom.Document;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ import java.util.List;
 public class SingleExperimentResource extends ServerResource {
 
     @Get("?xml")
-    public Representation getExperiment() {
+    public Representation getExperiment() throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         int queryExpID = Integer.parseInt(this.getAttribute("id"));
@@ -51,16 +52,17 @@ public class SingleExperimentResource extends ServerResource {
             domRepresentation = new DomRepresentation();
             domRepresentation.setDocument(document);
 
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
         } catch (Exception e) {
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
 
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
         return domRepresentation;
     }
 
     @Get("?json")
-    public Representation getExperimentJson() throws JSONException {
+    public Representation getExperimentJson() throws JSONException, IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         ExperimentJsonRepresentation experimentJsonRepresentation;
@@ -74,16 +76,16 @@ public class SingleExperimentResource extends ServerResource {
             experimentJsonRepresentation = new ExperimentJsonRepresentation(listOfExperiment);
             jsonRepresentation = experimentJsonRepresentation.getJsonRepresentation();
 
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
         } catch (Exception e){
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
-
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
         return jsonRepresentation;
     }
 
     @Post("?xml")
-    public void addAnalysis(Representation representation) {
+    public void addAnalysis(Representation representation) throws IOException {
 
         DomRepresentation domRepresentation = new DomRepresentation(representation);
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
@@ -101,15 +103,16 @@ public class SingleExperimentResource extends ServerResource {
                 AnalysisBuilder analysisBuilder = new AnalysisBuilder(analysis);
                 analysisBuilder.build();
             }
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
         } catch (Exception e){
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
     }
 
     @Post("?json")
-    public void addAnalysisJson(JsonRepresentation representation)  {
+    public void addAnalysisJson(JsonRepresentation representation) throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         DtoUpdater experimentUpdate = new ExperimentUpdate();
@@ -128,14 +131,16 @@ public class SingleExperimentResource extends ServerResource {
 
             Analysis analysis = new Analysis(id, Integer.parseInt(expID), info, dataLocation);
             experimentUpdate.update(analysis);
+
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
         } catch (Exception e){
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
     }
 
     @Post("?note")
-    public void addNotes(JsonRepresentation representation){
+    public void addNotes(JsonRepresentation representation) throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         int queryExpID = Integer.parseInt(this.getAttribute("id"));
@@ -148,14 +153,16 @@ public class SingleExperimentResource extends ServerResource {
             NoteController noteController = new NoteController(queryExpID, "Experiment");
             noteController.addNotes(note);
 
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
         } catch (Exception e){
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
     }
 
     @Put
-    public void exportExperiment(Representation representation) {
+    public void exportExperiment(Representation representation) throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
@@ -171,7 +178,7 @@ public class SingleExperimentResource extends ServerResource {
     }
 
     @Delete
-    public void deleteExperiment() {
+    public void deleteExperiment() throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         DtoDeleter dtoDeleter = new ExperimentDeleter();

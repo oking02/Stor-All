@@ -11,6 +11,7 @@ import org.restlet.resource.ServerResource;
 import org.restlet.util.Series;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by oking on 05/12/14.
@@ -18,7 +19,7 @@ import java.io.File;
 public class AnalysisToolTableAndForm extends ServerResource {
 
     @Get("?toolpage")
-    public Representation getToolForm(){
+    public Representation getToolForm() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 

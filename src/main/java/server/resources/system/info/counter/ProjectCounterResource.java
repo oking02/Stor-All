@@ -9,6 +9,7 @@ import org.restlet.resource.Get;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +19,7 @@ import java.util.Map;
 public class ProjectCounterResource extends ServerResource {
 
     @Get("?json")
-    public JsonRepresentation getProjectCounter(){
+    public JsonRepresentation getProjectCounter() throws IOException {
         int queryID = Integer.parseInt(this.getAttribute("id"));
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 

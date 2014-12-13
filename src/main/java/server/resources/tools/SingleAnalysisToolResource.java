@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.resource.*;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -17,7 +18,7 @@ import java.util.List;
 public class SingleAnalysisToolResource extends ServerResource {
 
     @Get("?json")
-    public JsonRepresentation getToolJson(){
+    public JsonRepresentation getToolJson() throws IOException {
 
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
@@ -40,7 +41,7 @@ public class SingleAnalysisToolResource extends ServerResource {
     }
 
     @Get("?usecount")
-    public JsonRepresentation getUseCount(JsonRepresentation representation){
+    public JsonRepresentation getUseCount(JsonRepresentation representation) throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
         try {
@@ -60,7 +61,7 @@ public class SingleAnalysisToolResource extends ServerResource {
     }
 
     @Post("?json")
-    public void updateAnalysisToolJson(JsonRepresentation representation){
+    public void updateAnalysisToolJson(JsonRepresentation representation) throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
         try {
@@ -77,7 +78,7 @@ public class SingleAnalysisToolResource extends ServerResource {
     }
 
     @Delete("?json")
-    public void deleteAnalysisToolJson(JsonRepresentation representation){
+    public void deleteAnalysisToolJson(JsonRepresentation representation) throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
         try {

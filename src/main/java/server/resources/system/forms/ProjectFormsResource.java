@@ -11,6 +11,7 @@ import org.restlet.resource.ServerResource;
 import org.restlet.util.Series;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by oking on 13/11/14.
@@ -18,7 +19,7 @@ import java.io.File;
 public class ProjectFormsResource extends ServerResource{
 
     @Get("?addproject")
-    public Representation getAddProjectForm(){
+    public Representation getAddProjectForm() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
@@ -27,7 +28,7 @@ public class ProjectFormsResource extends ServerResource{
     }
 
     @Get("?addprojectnotes")
-    public Representation getAddProjectNotesForm(){
+    public Representation getAddProjectNotesForm() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
@@ -36,7 +37,7 @@ public class ProjectFormsResource extends ServerResource{
     }
 
     @Get("?findproject")
-    public Representation findProjectForm(){
+    public Representation findProjectForm() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
@@ -45,7 +46,7 @@ public class ProjectFormsResource extends ServerResource{
     }
 
     @Get("?deleteproject")
-    public Representation deleteProjectForm(){
+    public Representation deleteProjectForm() throws IOException {
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 

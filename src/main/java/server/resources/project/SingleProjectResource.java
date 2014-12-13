@@ -16,6 +16,7 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.*;
 import org.w3c.dom.Document;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ import java.util.List;
 public class SingleProjectResource extends ServerResource {
 
     @Get("?xml")
-    public Representation getProject() {
+    public Representation getProject() throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         int queryID = Integer.parseInt(this.getAttribute("id"));
@@ -42,10 +43,12 @@ public class SingleProjectResource extends ServerResource {
             domRepresentation = new DomRepresentation();
             domRepresentation.setDocument(document);
 
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
         } catch (Exception e) {
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
         return domRepresentation;
     }
 
@@ -70,7 +73,7 @@ public class SingleProjectResource extends ServerResource {
     }
 
     @Post("?note")
-    public void addNotes(JsonRepresentation representation) {
+    public void addNotes(JsonRepresentation representation) throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         int queryExpID = Integer.parseInt(this.getAttribute("id"));
@@ -91,7 +94,7 @@ public class SingleProjectResource extends ServerResource {
     }
 
     @Put
-    public void exportProject(Representation representation){
+    public void exportProject(Representation representation) throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         try {
@@ -107,7 +110,7 @@ public class SingleProjectResource extends ServerResource {
 
 
     @Delete
-    public void deleteProject(){
+    public void deleteProject() throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         int queryID = Integer.parseInt(this.getAttribute("id"));

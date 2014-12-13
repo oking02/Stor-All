@@ -21,6 +21,7 @@ import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
 import org.w3c.dom.Document;
 
+import java.io.IOException;
 import java.util.List;
 
 import static main.java.server.responce.ResourceExceptionHandling.exceptionHandling;
@@ -54,7 +55,7 @@ public class ProjectResource extends ServerResource {
     }
 
     @Get("?json")
-    public Representation getProjectJson() {
+    public Representation getProjectJson() throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         ProjectJsonResource projectJsonResource = null;
@@ -65,15 +66,16 @@ public class ProjectResource extends ServerResource {
             List<TransferObject> listOfProjects = projectPresenter.createListOfAllProjects();
             projectJsonResource = new ProjectJsonResource(listOfProjects);
 
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
         } catch (Exception e) {
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
         return projectJsonResource.getJsonRepresentation();
     }
 
     @Post("?xml")
-    public void addProject(Representation representation){
+    public void addProject(Representation representation) throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         DomRepresentation domRepresentation = new DomRepresentation(representation);
@@ -99,7 +101,7 @@ public class ProjectResource extends ServerResource {
     }
 
     @Post("?json")
-    public void addProjectJson(JsonRepresentation representation) {
+    public void addProjectJson(JsonRepresentation representation) throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 
@@ -122,7 +124,7 @@ public class ProjectResource extends ServerResource {
     }
 
     @Post("?file")
-    public void exportToFile(Representation representation) {
+    public void exportToFile(Representation representation) throws IOException {
         DomRepresentation domRepresentation = new DomRepresentation(representation);
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
 

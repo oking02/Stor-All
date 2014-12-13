@@ -15,6 +15,7 @@ import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
 import org.w3c.dom.Document;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class ProjectExperimentsResource extends ServerResource {
     }
 
     @Get("?json")
-    public JsonRepresentation getExpInJson() throws JSONException {
+    public JsonRepresentation getExpInJson() throws JSONException, IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
         int queryID = Integer.parseInt(this.getAttribute("id"));
@@ -67,11 +68,12 @@ public class ProjectExperimentsResource extends ServerResource {
             listOfExperiments = experimentIn.getRelatedExperiments();
             experimentJsonRepresentation = new ExperimentJsonRepresentation(listOfExperiments);
 
+            responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
 
         } catch (Exception e) {
             throw new ResourceException(responseBuilder.addErrorStatus(e));
         }
-        responseBuilder.addSuccessStatus(getRequest().getMethod().getName());
+
         return experimentJsonRepresentation.getJsonRepresentation();
 
     }

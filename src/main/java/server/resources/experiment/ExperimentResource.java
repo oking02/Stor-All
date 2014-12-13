@@ -41,9 +41,6 @@ public class ExperimentResource extends ServerResource {
     public Representation getExperiments() throws IOException {
 
         ResponseBuilder responseBuilder = new ResponseBuilder(getResponse());
-        Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get("org.restlet.http.headers");
-        AddResponceHeaders.addHeaders(responseHeaders, getResponse());
-
         DomRepresentation domRepresentation = new DomRepresentation();
 
         try {
@@ -53,7 +50,6 @@ public class ExperimentResource extends ServerResource {
 
             DtoToXml toXmlDocument = new DtoToXml(listOfExperiments);
             Document document = toXmlDocument.createNewXMLDocument();
-
 
             domRepresentation.setDocument(document);
             domRepresentation.setIndenting(true);
@@ -109,7 +105,7 @@ public class ExperimentResource extends ServerResource {
     }
 
     @Post("?json")
-    public void addExperimentUsingJson(JsonRepresentation representation) {
+    public void addExperimentUsingJson(JsonRepresentation representation) throws IOException {
 
         try {
 
